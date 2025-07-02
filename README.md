@@ -116,6 +116,3 @@ A simple cross-platform Task Manager app built in Flutter (or your framework) th
 
 ---
 
-## 📝 **License**
-
-MIT License (or your license of choice)
