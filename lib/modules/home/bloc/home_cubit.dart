@@ -3,12 +3,12 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:turnotask/data/cache/task_cache_manager.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/services/notification_service.dart';
 
 part 'home_cubit.g.dart';
-
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -83,5 +83,15 @@ class HomeCubit extends Cubit<HomeState> {
     await TaskCacheManager.updateTask(index, updatedTask);
     await loadAndCacheTask();
     HapticFeedback.mediumImpact();
+  }
+
+  String formatDateTime(String dateTimeString) {
+    final dateTime = DateTime.parse(dateTimeString);
+
+    final day = DateFormat('d').format(dateTime); // 2
+    final month = DateFormat('MMMM').format(dateTime); // July
+    final time = DateFormat('h:mm a').format(dateTime); // 10:37 PM
+
+    return '$day $month at $time';
   }
 }

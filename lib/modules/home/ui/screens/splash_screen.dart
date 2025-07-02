@@ -5,7 +5,6 @@ import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -45,8 +44,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      backgroundColor: context.isLightTheme ? AppColors.bgColor : AppColors.bgColorDark,
+    return Scaffold(
+      backgroundColor: context.isLightTheme
+          ? AppColors.bgColor
+          : AppColors.bgColorDark,
       body: Center(
         child: Text(
           'TURNO TASK',

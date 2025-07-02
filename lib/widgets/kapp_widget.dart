@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -7,12 +8,12 @@ import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 
 Future kAppShowModalBottomSheet(
-    BuildContext context,
-    Widget content, {
-      EdgeInsets? padding,
-      bool isDismissible = true,
-      VoidCallback? whenComplete,
-    }) {
+  BuildContext context,
+  Widget content, {
+  EdgeInsets? padding,
+  bool isDismissible = true,
+  VoidCallback? whenComplete,
+}) {
   return showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
@@ -38,25 +39,6 @@ Future kAppShowModalBottomSheet(
         child: content,
       );
     },
-  ).whenComplete(() => whenComplete?.call());
-}
-
-Future<T?> kAppShowDialog<T>(
-    BuildContext context, {
-      required WidgetBuilder builder,
-      bool barrierDismissible = true,
-      Color? barrierColor,
-      String? barrierLabel,
-      VoidCallback? whenComplete,
-    }) {
-  return showDialog<T>(
-    context: context,
-    barrierDismissible: barrierDismissible,
-    barrierColor: context.isLightTheme
-        ? null
-        : AppColors.colorNeutral100.withOpacity(0.1),
-    barrierLabel: barrierLabel,
-    builder: builder,
   ).whenComplete(() => whenComplete?.call());
 }
 
@@ -88,8 +70,11 @@ class GlassmorphicSnackbar extends StatelessWidget {
   final String message;
   final bool errorIcon;
 
-  const GlassmorphicSnackbar(
-      {super.key, required this.message, this.errorIcon = false});
+  const GlassmorphicSnackbar({
+    super.key,
+    required this.message,
+    this.errorIcon = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +85,9 @@ class GlassmorphicSnackbar extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.w),
           decoration: BoxDecoration(
-            color:
-            AppColors.colorNeutralDark400.withAlpha((255.0 * 0.15).round()),
+            color: AppColors.colorNeutralDark400.withAlpha(
+              (255.0 * 0.15).round(),
+            ),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: AppColors.colorNeutral200.withAlpha((255.0 * 0.2).round()),
@@ -118,11 +104,14 @@ class GlassmorphicSnackbar extends StatelessWidget {
               ),
               Gap(12.w),
               Expanded(
-                child: Text(message,
-                    style: context.textTheme.bodySmall?.withAdaptiveColor(
-                        context,
-                        lightColor: AppColors.colorNeutral900,
-                        darkColor: AppColors.colorNeutral50)),
+                child: Text(
+                  message,
+                  style: context.textTheme.bodySmall?.withAdaptiveColor(
+                    context,
+                    lightColor: AppColors.colorNeutral900,
+                    darkColor: AppColors.colorNeutral50,
+                  ),
+                ),
               ),
             ],
           ),

@@ -6,15 +6,9 @@ class ThemeState extends Equatable {
   final ThemeModeOption themeMode;
   final ThemeData? theme;
 
-  const ThemeState({
-    this.themeMode = ThemeModeOption.system,
-    this.theme,
-  });
+  const ThemeState({this.themeMode = ThemeModeOption.system, this.theme});
 
-  ThemeState copyWith({
-    ThemeModeOption? themeMode,
-    ThemeData? theme,
-  }) {
+  ThemeState copyWith({ThemeModeOption? themeMode, ThemeData? theme}) {
     return ThemeState(
       themeMode: themeMode ?? this.themeMode,
       theme: theme ?? this.theme,
@@ -22,8 +16,5 @@ class ThemeState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-    themeMode,
-    theme,
-  ];
+  List<Object?> get props => [themeMode, theme];
 }

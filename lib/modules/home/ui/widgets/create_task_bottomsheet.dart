@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
-import 'package:turnotask/data/theme/bloc/theme_cubit.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/modules/home/ui/widgets/primary_cta.dart';
-import 'package:turnotask/services/notification_service.dart';
 import 'package:turnotask/widgets/bottom_sheet_mainframe.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {

@@ -8,6 +8,7 @@ import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/data/theme/bloc/theme_cubit.dart';
 import 'package:turnotask/services/get_it_service.dart';
 import 'package:turnotask/services/notification_service.dart';
+
 import 'modules/home/bloc/home_cubit.dart';
 
 void main() async {
@@ -32,7 +33,7 @@ class TurnoTaskApp extends StatelessWidget {
         BlocProvider(create: (BuildContext context) => HomeCubit()),
         BlocProvider(create: (BuildContext context) => ThemeCubit()),
       ],
-      child:  ScreenUtilInit(
+      child: ScreenUtilInit(
         minTextAdapt: false,
         splitScreenMode: false,
         designSize: const Size(360, 800),
@@ -44,9 +45,9 @@ class TurnoTaskApp extends StatelessWidget {
               return MaterialApp(
                 builder: (context, child) {
                   return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(
-                      textScaler: const TextScaler.linear(1),
-                    ),
+                    data: MediaQuery.of(
+                      context,
+                    ).copyWith(textScaler: const TextScaler.linear(1)),
                     child: child!,
                   );
                 },

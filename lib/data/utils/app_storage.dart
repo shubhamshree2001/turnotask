@@ -4,8 +4,6 @@ import 'package:turnotask/data/theme/bloc/theme_cubit.dart';
 class AppStorage {
   final _box = GetStorage();
 
-
-
   Future<void> setThemeMode(ThemeModeOption mode) async {
     await _box.write(TurnoStorageKeys.themeMode, mode.name);
   }
@@ -14,7 +12,7 @@ class AppStorage {
     final storedValue = await _box.read(TurnoStorageKeys.themeMode);
     if (storedValue == null) return ThemeModeOption.system;
     return ThemeModeOption.values.firstWhere(
-          (e) => e.name == storedValue,
+      (e) => e.name == storedValue,
       orElse: () => ThemeModeOption.system,
     );
   }

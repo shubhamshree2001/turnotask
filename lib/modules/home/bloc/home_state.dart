@@ -1,7 +1,5 @@
 part of 'home_cubit.dart';
 
-
-
 @CopyWith()
 class HomeState extends Equatable {
   final bool isLoading;
@@ -9,7 +7,6 @@ class HomeState extends Equatable {
   final DateTime? selectedDateTime;
   final Recurrence selectedRecurrence;
   final List<Task> allTask;
-
 
   const HomeState({
     this.isLoading = false,

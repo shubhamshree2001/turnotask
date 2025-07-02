@@ -24,7 +24,7 @@ class ThemeCubit extends Cubit<ThemeState> {
         break;
       case ThemeModeOption.system:
       default:
-      // Use system setting; you can provide default fallback
+        // Use system setting; you can provide default fallback
         final brightness =
             SchedulerBinding.instance.platformDispatcher.platformBrightness;
         themeData = brightness == Brightness.dark

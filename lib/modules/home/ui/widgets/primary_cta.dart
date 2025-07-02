@@ -33,21 +33,19 @@ class PrimaryCta extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       ),
       onPressed: isButtonDisable ? () {} : onTap,
-      child:
-           Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
-                child: Text(
-                  label.toString(),
-                  style: context.textTheme.bodySmall?.withAdaptiveColor(
-                    context,
-                    lightColor: AppColors.colorNeutral50,
-                    darkColor: AppColors.white,
-                  ),
-                ),
-              ),
-            )
-
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
+          child: Text(
+            label.toString(),
+            style: context.textTheme.bodySmall?.withAdaptiveColor(
+              context,
+              lightColor: AppColors.colorNeutral50,
+              darkColor: AppColors.white,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

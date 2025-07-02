@@ -1,9 +1,4 @@
-enum Recurrence {
-  once,
-  daily,
-  weekly,
-  monthly,
-}
+enum Recurrence { once, daily, weekly, monthly }
 
 class Task {
   final int id;

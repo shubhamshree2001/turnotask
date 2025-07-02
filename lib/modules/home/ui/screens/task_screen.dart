@@ -7,6 +7,7 @@ import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/data/utils/string_extension.dart';
 import 'package:turnotask/data/values/app_images.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
+import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/modules/home/ui/widgets/create_task_bottomsheet.dart';
 import 'package:turnotask/modules/home/ui/widgets/set_app_theme_bottomsheet.dart';
 import 'package:turnotask/widgets/kapp_widget.dart';
@@ -82,165 +83,126 @@ class _TaskPageState extends State<TaskPage> {
                                 ),
                           ),
                         )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: homeCubit.state.allTask.length,
-                          itemBuilder: (context, index) {
-                            final task = homeCubit.state.allTask[index];
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.w),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 16.w,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 16.w,
-                                      height: 16.w,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: task.isCompleted
-                                            ? Colors.green
-                                            : Colors.orange,
-                                      ),
-                                      child: Icon(
-                                        task.isCompleted
-                                            ? Icons.check
-                                            : Icons.circle,
-                                        size: 16.w,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Gap(12.w),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            task.title,
-                                            style: context.textTheme.labelLarge
-                                                ?.withAdaptiveColor(
-                                                  context,
-                                                  lightColor: AppColors
-                                                      .colorNeutralDark900,
-                                                  darkColor:
-                                                      AppColors.colorNeutral900,
-                                                ),
-                                          ),
-                                          Gap(4.w),
-                                          Text(
-                                            task.description,
-                                            style: context
-                                                .textTheme
-                                                .displaySmall
-                                                ?.withAdaptiveColor(
-                                                  context,
-                                                  lightColor: AppColors
-                                                      .colorNeutralDark900,
-                                                  darkColor:
-                                                      AppColors.colorNeutral900,
-                                                ),
-                                          ),
-                                          Gap(4.w),
-                                          Text(
-                                            'Created: ${task.dateTime}',
-                                            style: context
-                                                .textTheme
-                                                .displaySmall
-                                                ?.withAdaptiveColor(
-                                                  context,
-                                                  lightColor: AppColors
-                                                      .colorNeutralDark900,
-                                                  darkColor:
-                                                      AppColors.colorNeutral900,
-                                                ),
-                                          ),
-                                          if (task.isCompleted &&
-                                              task.completionTime != null)
-                                            Text(
-                                              'Completed: ${task.completionTime}',
-                                              style: context
-                                                  .textTheme
-                                                  .displaySmall
-                                                  ?.withAdaptiveColor(
-                                                    context,
-                                                    lightColor: AppColors
-                                                        .colorNeutralDark900,
-                                                    darkColor: AppColors
-                                                        .colorNeutral900,
-                                                  ),
-                                            ),
-                                          Gap(4.w),
-                                          Text(
-                                            'Recurrence: ${task.recurrence.name.toUpperCase()}',
-                                            style: context
-                                                .textTheme
-                                                .displaySmall
-                                                ?.withAdaptiveColor(
-                                                  context,
-                                                  lightColor: AppColors
-                                                      .colorNeutralDark900,
-                                                  darkColor:
-                                                      AppColors.colorNeutral900,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Gap(8.w),
-                                    if (!task.isCompleted)
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.check,
-                                          color: Colors.orange,
-                                        ),
-                                        tooltip: 'Mark as Completed',
-                                        onPressed: () {
-                                          homeCubit.markAsCompleted(
-                                            task,
-                                            index,
-                                          );
-                                        },
-                                      ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                      tooltip: 'Delete',
-                                      onPressed: () async {
-                                        await homeCubit.deleteTask(index);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                      : taskListView(homeCubit),
                   Gap(20.h),
                 ],
               ),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget taskListView(HomeCubit homeCubit) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: homeCubit.state.allTask.length,
+      itemBuilder: (context, index) {
+        final task = homeCubit.state.allTask[index];
+        return taskListItem(task, context, homeCubit, index);
+      },
+    );
+  }
+
+  Widget taskListItem(
+    Task task,
+    BuildContext context,
+    HomeCubit homeCubit,
+    int index,
+  ) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 16.w,
+              height: 16.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: task.isCompleted ? Colors.green : Colors.orange,
+              ),
+              child: Icon(
+                task.isCompleted ? Icons.check : Icons.circle,
+                size: 16.w,
+                color: Colors.white,
+              ),
+            ),
+            Gap(12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    task.title,
+                    style: context.textTheme.labelLarge?.withAdaptiveColor(
+                      context,
+                      lightColor: AppColors.colorNeutral900,
+                      darkColor: AppColors.colorNeutral900,
+                    ),
+                  ),
+                  Gap(4.w),
+                  taskDetailText(task.description, context),
+                  Gap(4.w),
+                  taskDetailText('Created on ${homeCubit.formatDateTime(task.dateTime.toString())}', context),
+                  if (task.isCompleted && task.completionTime != null)
+                    taskDetailText(
+                      'Completed on ${homeCubit.formatDateTime(task.completionTime.toString())}',
+                      context,
+                    ),
+                  Gap(4.w),
+                  taskDetailText(
+                    'Recurrence: ${task.recurrence.name.toUpperCase()}',
+                    context,
+                  ),
+                ],
+              ),
+            ),
+            Gap(8.w),
+            if (!task.isCompleted)
+              IconButton(
+                icon: const Icon(Icons.pending_actions, color: Colors.orange),
+                tooltip: 'Mark as Completed',
+                onPressed: () {
+                  homeCubit.markAsCompleted(task, index);
+                },
+              ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              tooltip: 'Delete',
+              onPressed: () async {
+                await homeCubit.deleteTask(index);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget taskDetailText(String text, BuildContext context) {
+    return Text(
+      text,
+      style: context.textTheme.displaySmall?.withAdaptiveColor(
+        context,
+        lightColor: AppColors.colorNeutral900,
+        darkColor: AppColors.colorNeutral900,
       ),
     );
   }

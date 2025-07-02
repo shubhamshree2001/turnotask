@@ -14,21 +14,19 @@ class AppTheme {
       surface: AppColors.bgColorDark,
       error: Colors.red,
     ),
-    primarySwatch: MaterialColor(
-      AppColors.primaryDark400.toARGB32(),
-      const <int, Color>{
-        50: AppColors.primaryDark50,
-        100: AppColors.primaryDark100,
-        200: AppColors.primaryDark200,
-        300: AppColors.primaryDark300,
-        400: AppColors.primaryDark400,
-        500: AppColors.primaryDark500,
-        600: AppColors.primaryDark600,
-        700: AppColors.primaryDark700,
-        800: AppColors.primaryDark800,
-        900: AppColors.primaryDark900,
-      },
-    ),
+    primarySwatch:
+        MaterialColor(AppColors.primaryDark400.toARGB32(), const <int, Color>{
+          50: AppColors.primaryDark50,
+          100: AppColors.primaryDark100,
+          200: AppColors.primaryDark200,
+          300: AppColors.primaryDark300,
+          400: AppColors.primaryDark400,
+          500: AppColors.primaryDark500,
+          600: AppColors.primaryDark600,
+          700: AppColors.primaryDark700,
+          800: AppColors.primaryDark800,
+          900: AppColors.primaryDark900,
+        }),
     brightness: Brightness.dark,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.colorNeutralDark700,
@@ -46,23 +44,17 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryDark400,
         textStyle: TurnoTextStyle.aller14Inter600,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.w),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.w),
-        borderSide: const BorderSide(
-          color: AppColors.colorNeutralDark200,
-        ),
+        borderSide: const BorderSide(color: AppColors.colorNeutralDark200),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.w),
-        borderSide: const BorderSide(
-          color: AppColors.primaryDark100,
-        ),
+        borderSide: const BorderSide(color: AppColors.primaryDark100),
       ),
     ),
     scaffoldBackgroundColor: AppColors.bgColorDark,
@@ -87,21 +79,19 @@ class AppTheme {
       surface: AppColors.bgColor,
       error: Colors.red,
     ),
-    primarySwatch: MaterialColor(
-      AppColors.primary400.toARGB32(),
-      const <int, Color>{
-        50: AppColors.primary50,
-        100: AppColors.primary100,
-        200: AppColors.primary200,
-        300: AppColors.primary300,
-        400: AppColors.primary400,
-        500: AppColors.primary500,
-        600: AppColors.primary600,
-        700: AppColors.primary700,
-        800: AppColors.primary800,
-        900: AppColors.primary900,
-      },
-    ),
+    primarySwatch:
+        MaterialColor(AppColors.primary400.toARGB32(), const <int, Color>{
+          50: AppColors.primary50,
+          100: AppColors.primary100,
+          200: AppColors.primary200,
+          300: AppColors.primary300,
+          400: AppColors.primary400,
+          500: AppColors.primary500,
+          600: AppColors.primary600,
+          700: AppColors.primary700,
+          800: AppColors.primary800,
+          900: AppColors.primary900,
+        }),
     brightness: Brightness.light,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.colorNeutral700,
@@ -119,23 +109,17 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary400,
         textStyle: TurnoTextStyle.aller14Inter600,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.w),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.w),
-        borderSide: const BorderSide(
-          color: AppColors.colorNeutral200,
-        ),
+        borderSide: const BorderSide(color: AppColors.colorNeutral200),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.w),
-        borderSide: const BorderSide(
-          color: AppColors.primary100,
-        ),
+        borderSide: const BorderSide(color: AppColors.primary100),
       ),
     ),
     scaffoldBackgroundColor: AppColors.bgColor,
@@ -171,15 +155,15 @@ extension ThemeExtensions on BuildContext {
 
 extension CustomTextStyles on TextStyle {
   TextStyle withAdaptiveColor(
-      BuildContext context, {
-        required Color lightColor,
-        required Color darkColor,
-        double? letterSpacing,
-        double? height,
-        FontWeight? fontWeight,
-        FontStyle? fontStyle,
-        double? fontSize,
-      }) {
+    BuildContext context, {
+    required Color lightColor,
+    required Color darkColor,
+    double? letterSpacing,
+    double? height,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? fontSize,
+  }) {
     return copyWith(
       color: context.isDarkTheme ? darkColor : lightColor,
       letterSpacing: letterSpacing,

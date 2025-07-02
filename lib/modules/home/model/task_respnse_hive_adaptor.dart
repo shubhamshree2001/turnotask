@@ -13,7 +13,9 @@ class TaskAdapter extends TypeAdapter<Task> {
       description: reader.readString(),
       dateTime: DateTime.fromMillisecondsSinceEpoch(reader.readInt()),
       isCompleted: reader.readBool(),
-      completionTime: reader.readBool() ? DateTime.fromMillisecondsSinceEpoch(reader.readInt()) : null,
+      completionTime: reader.readBool()
+          ? DateTime.fromMillisecondsSinceEpoch(reader.readInt())
+          : null,
       recurrence: Recurrence.values[reader.readInt()],
     );
   }

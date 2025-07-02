@@ -26,8 +26,7 @@ class TaskCacheManager {
 
   static Future<void> updateTask(int index, Task updatedTask) async {
     var box = Hive.box<Task>(boxName);
-   // final oldTask = box.getAt(index);
+    // final oldTask = box.getAt(index);
     await box.putAt(index, updatedTask);
   }
-
 }
