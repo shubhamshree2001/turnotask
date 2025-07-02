@@ -49,3 +49,45 @@ class PrimaryCta extends StatelessWidget {
     );
   }
 }
+
+class SecondaryCta extends StatelessWidget {
+  const SecondaryCta(
+      {super.key, required this.onTap, required this.label, this.color});
+
+  final VoidCallback onTap;
+  final String label;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shadowColor: AppColors.black.withOpacity(0.1) ,
+        elevation: 0,
+        backgroundColor: color ?? AppColors.bgColor,
+        textStyle: context.textTheme.bodyLarge,
+        side: BorderSide(
+            color: context.isLightTheme
+                ? AppColors.colorNeutral300
+                : AppColors.colorNeutralDark300),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4.w),
+        ),
+      ),
+      onPressed: onTap,
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.w, horizontal: 16.w),
+          child: Text(
+            label.toString(),
+            style: context.textTheme.bodyLarge?.withAdaptiveColor(
+              context,
+              lightColor: AppColors.primary400,
+              darkColor: AppColors.primary400,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

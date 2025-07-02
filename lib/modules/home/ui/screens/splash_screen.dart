@@ -7,6 +7,7 @@ import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/data/utils/app_storage.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/services/get_it_service.dart';
+import 'package:turnotask/services/notification_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,13 +35,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> insideInitCalledFnc(HomeCubit homeCubit) async {
     // int? taskId = await turnoStorage.getNotificationTaskId();
+    await NotificationService().requestNotification();
     int taskId = gPrefs.getNotificationTaskId();
-    if(taskId != -1){
+    if (taskId != -1) {
       await TaskCacheManager.markTaskAsCompletedById(taskId);
       gPrefs.clear();
-     // await clearNotificationTaskId();
+      // await clearNotificationTaskId();
     }
-    await Future.wait([homeCubit.loadAndCacheTask()]);
+    await Future.wait([
+      homeCubit.loadAndCacheTask(),
+    ]);
     if (!hasNavigated && mounted) {
       _navigate();
     }

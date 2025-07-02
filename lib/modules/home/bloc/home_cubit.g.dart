@@ -17,6 +17,8 @@ abstract class _$HomeStateCWProxy {
 
   HomeState allTask(List<Task> allTask);
 
+  HomeState hasNotificationPermission(bool hasNotificationPermission);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `HomeState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -29,6 +31,7 @@ abstract class _$HomeStateCWProxy {
     DateTime? selectedDateTime,
     Recurrence selectedRecurrence,
     List<Task> allTask,
+    bool hasNotificationPermission,
   });
 }
 
@@ -56,6 +59,10 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
   HomeState allTask(List<Task> allTask) => this(allTask: allTask);
 
   @override
+  HomeState hasNotificationPermission(bool hasNotificationPermission) =>
+      this(hasNotificationPermission: hasNotificationPermission);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `HomeState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -68,6 +75,7 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
     Object? selectedDateTime = const $CopyWithPlaceholder(),
     Object? selectedRecurrence = const $CopyWithPlaceholder(),
     Object? allTask = const $CopyWithPlaceholder(),
+    Object? hasNotificationPermission = const $CopyWithPlaceholder(),
   }) {
     return HomeState(
       isLoading: isLoading == const $CopyWithPlaceholder()
@@ -90,6 +98,11 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
           ? _value.allTask
           // ignore: cast_nullable_to_non_nullable
           : allTask as List<Task>,
+      hasNotificationPermission:
+          hasNotificationPermission == const $CopyWithPlaceholder()
+          ? _value.hasNotificationPermission
+          // ignore: cast_nullable_to_non_nullable
+          : hasNotificationPermission as bool,
     );
   }
 }

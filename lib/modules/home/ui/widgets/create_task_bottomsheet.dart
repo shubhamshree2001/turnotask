@@ -49,7 +49,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 Gap(12.h),
                 Text(
                   homeCubit.state.selectedDateTime == null
-                      ? 'Select Date/Time'
+                      ? 'Set Reminder'
                       : homeCubit.state.selectedDateTime.toString(),
                   style: context.textTheme.labelLarge?.withAdaptiveColor(
                     context,

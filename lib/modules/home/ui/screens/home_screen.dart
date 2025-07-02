@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,34 +11,35 @@ import 'package:turnotask/data/values/app_images.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/modules/home/ui/widgets/create_task_bottomsheet.dart';
+import 'package:turnotask/modules/home/ui/widgets/notification_permission_dialogue.dart';
 import 'package:turnotask/modules/home/ui/widgets/set_app_theme_bottomsheet.dart';
 import 'package:turnotask/widgets/kapp_widget.dart';
 
-class TaskPage extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final int? notificationTaskId;
 
-  const TaskPage({super.key, this.notificationTaskId});
+  const HomeScreen({super.key, this.notificationTaskId});
 
   static pushReplacement(context, [int? notificationTaskId]) =>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              TaskPage(notificationTaskId: notificationTaskId),
+              HomeScreen(notificationTaskId: notificationTaskId),
         ),
       );
 
   @override
-  State<TaskPage> createState() => _TaskPageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
-
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('Called applifecycle');
     if (state == AppLifecycleState.resumed) {
       updateDataNeeded();
+      updateNotificationPermission();
       print('Called applifecycle resumed');
     }
   }
@@ -45,15 +48,27 @@ class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final HomeCubit homeCubit = context.read<HomeCubit>();
+      if(Platform.isAndroid) {
+        await homeCubit.checkHasNotificationPermission();
+      }
+    });
     // NotificationService().registerMarkDoneCallback((taskId) {
-      //debugPrint('Marking task ${widget.notificationTaskId} as done!');
+    //debugPrint('Marking task ${widget.notificationTaskId} as done!');
     //});
   }
-
 
   void updateDataNeeded() {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     homeCubit.updateTaskData();
+  }
+
+  void updateNotificationPermission(){
+    if(Platform.isAndroid) {
+      final HomeCubit homeCubit = context.read<HomeCubit>();
+      homeCubit.checkHasNotificationPermission();
+    }
   }
 
   // @override
@@ -64,33 +79,44 @@ class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () async {
-          kAppShowModalBottomSheet(context, const CreateTaskBottomSheet());
-          //await TaskCacheManager.findTaskById(1751481024);
-        },
-        tooltip: 'Add Task',
-        child: const Icon(Icons.add),
-      ),
-      appBar: AppBar(
-        backgroundColor: context.isLightTheme ? Colors.green : Colors.green,
-        elevation: 6,
-        title: Text(
-          'TurnoTask',
-          style: context.textTheme.labelLarge?.withAdaptiveColor(
-            context,
-            lightColor: AppColors.colorNeutral900,
-            darkColor: AppColors.colorNeutralDark900,
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        final HomeCubit homeCubit = context.read<HomeCubit>();
+        return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.green,
+            onPressed: () async {
+              if (homeCubit.state.hasNotificationPermission) {
+                kAppShowModalBottomSheet(
+                  context,
+                  const CreateTaskBottomSheet(),
+                );
+              } else {
+                kAppShowDialog(context, whenComplete: () {}, builder: (dialogContext) {
+                  return NotificationPermissionDialogue(
+                    dialogContext: dialogContext,
+                  );
+                });
+
+              }
+            },
+            tooltip: 'Add Task',
+            child: const Icon(Icons.add),
           ),
-        ),
-        actions: [setAppTheme(context)],
-      ),
-      body: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          final HomeCubit homeCubit = context.read<HomeCubit>();
-          return Padding(
+          appBar: AppBar(
+            backgroundColor: context.isLightTheme ? Colors.green : Colors.green,
+            elevation: 6,
+            title: Text(
+              'TurnoTask',
+              style: context.textTheme.labelLarge?.withAdaptiveColor(
+                context,
+                lightColor: AppColors.colorNeutral900,
+                darkColor: AppColors.colorNeutralDark900,
+              ),
+            ),
+            actions: [setAppTheme(context)],
+          ),
+          body: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(
               child: Column(
@@ -101,7 +127,7 @@ class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
                   homeCubit.state.allTask.isEmpty
                       ? Center(
                           child: Text(
-                            'There is no task.',
+                            'Nothing to do yet! Add a task and set a reminder.',
                             style: context.textTheme.labelLarge
                                 ?.withAdaptiveColor(
                                   context,
@@ -115,9 +141,9 @@ class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
                 ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -251,5 +277,4 @@ class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
       ),
     );
   }
-
 }

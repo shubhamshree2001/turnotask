@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
@@ -6,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turnotask/data/cache/task_cache_manager.dart';
-import 'package:turnotask/data/utils/app_storage.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/services/get_it_service.dart';
 import 'package:turnotask/services/notification_service.dart';
@@ -20,6 +21,13 @@ class HomeCubit extends Cubit<HomeState> {
 
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
+  Future<void> checkHasNotificationPermission() async {
+    bool hasPermission = await NotificationService()
+        .checkExactAlarmPermission();
+    // print("hasPermission1 : $hasPermission");
+    emit(state.copyWith(hasNotificationPermission: hasPermission));
+  }
 
   void setSelectedDateTimeForTask(DateTime? selectedDateTime) {
     emit(state.copyWith(selectedDateTime: selectedDateTime));

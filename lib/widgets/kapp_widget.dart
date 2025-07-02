@@ -42,6 +42,25 @@ Future kAppShowModalBottomSheet(
   ).whenComplete(() => whenComplete?.call());
 }
 
+Future<T?> kAppShowDialog<T>(
+    BuildContext context, {
+      required WidgetBuilder builder,
+      bool barrierDismissible = true,
+      Color? barrierColor,
+      String? barrierLabel,
+      VoidCallback? whenComplete,
+    }) {
+  return showDialog<T>(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    barrierColor: context.isLightTheme
+        ? null
+        : AppColors.colorNeutral100.withOpacity(0.1),
+    barrierLabel: barrierLabel,
+    builder: builder,
+  ).whenComplete(() => whenComplete?.call());
+}
+
 void kAppShowGlassmorphicSnackbar(BuildContext context, String message) {
   final overlay = Overlay.of(context);
   final overlayEntry = OverlayEntry(

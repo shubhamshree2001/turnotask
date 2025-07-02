@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:turnotask/modules/home/ui/screens/splash_screen.dart';
-import 'package:turnotask/modules/home/ui/screens/task_screen.dart';
+import 'package:turnotask/modules/home/ui/screens/home_screen.dart';
 
 class Routes {
   static const initial = '/';
@@ -9,6 +9,6 @@ class Routes {
 
   static Map<String, WidgetBuilder> routes = {
     splashScreen: (context) => const SplashScreen(),
-    homeScreen: (context) => const TaskPage(),
+    homeScreen: (context) => const HomeScreen(),
   };
 }

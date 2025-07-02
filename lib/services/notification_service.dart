@@ -5,7 +5,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:turnotask/modules/home/model/task_model.dart';
 
-
 @pragma('vm:entry-point')
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -52,11 +51,69 @@ class NotificationService {
       settings,
       onDidReceiveNotificationResponse:
           (NotificationResponse notificationResponse) {
-            print("notiication clicked");
-            print(notificationResponse.payload);
+            // print("notiication clicked");
+            // print(notificationResponse.payload);
           },
       onDidReceiveBackgroundNotificationResponse: onNotificationResponse,
     );
+  }
+
+  Future<bool> checkExactAlarmPermission() async {
+    final bool? hasPermission = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.canScheduleExactNotifications();
+    if (hasPermission == null) {
+      debugPrint('Could not determine exact alarm permission.');
+      return false;
+    }
+    if (hasPermission) {
+      debugPrint('Exact alarms already permitted.');
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> requestExactAlarmPermission() async {
+    final bool? hasPermission = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.canScheduleExactNotifications();
+    if (hasPermission == null) {
+      debugPrint('Could not determine exact alarm permission.');
+    } else if (hasPermission) {
+      debugPrint('Exact alarms already permitted.');
+    } else {
+      debugPrint('Exact alarms NOT permitted. Opening settings...');
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.requestExactAlarmsPermission();
+    }
+  }
+
+  Future<void> requestNotification() async {
+    final bool? hasPermission = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+    >()
+        ?.areNotificationsEnabled();
+    if (hasPermission == null) {
+      debugPrint('Could not determine exact alarm permission.');
+    } else if (hasPermission) {
+      debugPrint('Exact alarms already permitted.');
+    } else {
+      debugPrint('Exact alarms NOT permitted. Opening settings...');
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+      >()
+          ?.requestNotificationsPermission();
+    }
   }
 
   Future<void> showInstantNotification({required Task task}) async {
