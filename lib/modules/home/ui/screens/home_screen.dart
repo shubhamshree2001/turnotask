@@ -127,7 +127,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   homeCubit.state.allTask.isEmpty
                       ? Center(
                           child: Text(
-                            'Nothing to do yet! Add a task and set a reminder.',
+                            'Your task list is empty. Tap + to add a task and set a reminder so you never miss a thing!',
+                            textAlign: TextAlign.center,
                             style: context.textTheme.labelLarge
                                 ?.withAdaptiveColor(
                                   context,
