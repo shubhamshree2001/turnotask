@@ -12,6 +12,7 @@ import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/modules/home/ui/widgets/create_task_bottomsheet.dart';
 import 'package:turnotask/modules/home/ui/widgets/notification_permission_dialogue.dart';
+import 'package:turnotask/modules/home/ui/widgets/primary_cta.dart';
 import 'package:turnotask/modules/home/ui/widgets/set_app_theme_bottomsheet.dart';
 import 'package:turnotask/widgets/kapp_widget.dart';
 
@@ -195,19 +196,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: 16.w,
-              height: 16.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: task.isCompleted ? Colors.green : Colors.orange,
-              ),
-              child: Icon(
-                task.isCompleted ? Icons.check : Icons.circle,
-                size: 16.w,
-                color: Colors.white,
-              ),
-            ),
+            task.isCompleted
+                ? Container(
+                    width: 16.w,
+                    height: 16.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: task.isCompleted ? Colors.green : Colors.orange,
+                    ),
+                    child: Icon(Icons.check, size: 16.w, color: Colors.white),
+                  )
+                : Icon(Icons.pending_actions, color: Colors.orange),
             Gap(12.w),
             Expanded(
               child: Column(
@@ -243,12 +242,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
             Gap(8.w),
             if (!task.isCompleted)
-              IconButton(
-                icon: const Icon(Icons.pending_actions, color: Colors.orange),
-                tooltip: 'Mark as Completed',
-                onPressed: () {
+              PrimaryCta(
+                onTap: () {
                   homeCubit.markAsCompleted(task, index);
                 },
+                label: "Done",
+                color: Colors.orange,
               ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
