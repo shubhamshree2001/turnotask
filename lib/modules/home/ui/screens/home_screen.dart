@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final HomeCubit homeCubit = context.read<HomeCubit>();
-      if(Platform.isAndroid) {
+      if (Platform.isAndroid) {
         await homeCubit.checkHasNotificationPermission();
       }
     });
@@ -64,8 +64,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     homeCubit.updateTaskData();
   }
 
-  void updateNotificationPermission(){
-    if(Platform.isAndroid) {
+  void updateNotificationPermission() {
+    if (Platform.isAndroid) {
       final HomeCubit homeCubit = context.read<HomeCubit>();
       homeCubit.checkHasNotificationPermission();
     }
@@ -86,18 +86,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.green,
             onPressed: () async {
-              if (homeCubit.state.hasNotificationPermission) {
+              if (Platform.isAndroid) {
+                if (homeCubit.state.hasNotificationPermission) {
+                  kAppShowModalBottomSheet(
+                    context,
+                    const CreateTaskBottomSheet(),
+                  );
+                } else {
+                  kAppShowDialog(
+                    context,
+                    whenComplete: () {},
+                    builder: (dialogContext) {
+                      return NotificationPermissionDialogue(
+                        dialogContext: dialogContext,
+                      );
+                    },
+                  );
+                }
+              } else {
                 kAppShowModalBottomSheet(
                   context,
                   const CreateTaskBottomSheet(),
                 );
-              } else {
-                kAppShowDialog(context, whenComplete: () {}, builder: (dialogContext) {
-                  return NotificationPermissionDialogue(
-                    dialogContext: dialogContext,
-                  );
-                });
-
               }
             },
             tooltip: 'Add Task',
