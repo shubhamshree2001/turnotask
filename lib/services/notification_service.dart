@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:turnotask/modules/home/model/task_model.dart';
+
 
 @pragma('vm:entry-point')
 class NotificationService {
@@ -25,6 +27,20 @@ class NotificationService {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
+      notificationCategories: [
+        DarwinNotificationCategory(
+          "testCategory",
+          actions: [
+            DarwinNotificationAction.plain(
+              "id_1",
+              "Mark as done",
+              options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.foreground,
+              },
+            ),
+          ],
+        ),
+      ],
     );
 
     final settings = InitializationSettings(
@@ -92,9 +108,15 @@ class NotificationService {
           channelDescription: 'TurnoTask reminders',
           importance: Importance.high,
           priority: Priority.high,
-          actions: [AndroidNotificationAction('mark_done', 'Mark as Done')],
+          actions: [
+            AndroidNotificationAction(
+              'mark_done',
+              'Mark as Done',
+              //showsUserInterface: true,
+            ),
+          ],
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(categoryIdentifier: "testCategory"),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: matchComponents,
@@ -108,26 +130,47 @@ class NotificationService {
     debugPrint('Notification payload: ${response.payload}');
     debugPrint('Notification payload: ${response.actionId}');
 
-    // if (response.actionId == 'mark_done') {
-    //   final payload = response.payload;
-    //   if (payload != null) {
-    //     final taskId = int.tryParse(payload);
-    //     if (taskId != null) {
-    //       NotificationService.markTaskAsDoneFromNotification(taskId);
-    //     }
-    //   }
-    // }
+    if (response.actionId == 'mark_done' || response.actionId == 'id_1') {
+      final payload = response.payload;
+      if (payload != null) {
+        final taskId = int.tryParse(payload);
+        if (taskId != null) {
+          //_markDoneCallback?.call(taskId);
+          taskIdOperation(taskId);
+          //TaskPage.pushReplacement(navigatorKey.currentContext, taskId);
+        } else {
+          debugPrint('Invalid task ID in payload');
+        }
+      } else {
+        debugPrint('No payload received');
+      }
+    } else {
+      debugPrint('Notification tapped but no mark_done action');
+    }
   }
 
-  void Function(int taskId)? _markDoneCallback;
+  static Future<void> taskIdOperation(int taskId) async {
+    // await GetStorage.init();
+    // final box = GetStorage();
+    // box.write('notificationTaskId', taskId);
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt("notificationTaskID", taskId);
+    await Future.delayed(const Duration(milliseconds: 200));
+    // int? id = prefs.getInt("notificationTaskID");
+    // print("id : $id");
+  }
 
+  /// Your callback that the UI registers to handle mark-as-done.
+  static void Function(int taskId)? _markDoneCallback;
+
+  /// Register your mark-as-done callback from your UI.
   void registerMarkDoneCallback(void Function(int taskId) callback) {
     _markDoneCallback = callback;
   }
 
-  static void markTaskAsDoneFromNotification(int taskId) {
-    NotificationService()._markDoneCallback?.call(taskId);
-  }
+  // static void markTaskAsDoneFromNotification(int taskId) {
+  //   NotificationService()._markDoneCallback?.call(taskId);
+  // }
 
   Future<void> cancelNotification(int taskId) async {
     await flutterLocalNotificationsPlugin.cancel(taskId);

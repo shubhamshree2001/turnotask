@@ -29,4 +29,31 @@ class TaskCacheManager {
     // final oldTask = box.getAt(index);
     await box.putAt(index, updatedTask);
   }
+
+  static Future<void> markTaskAsCompletedById(int taskId) async {
+    final box = Hive.box<Task>(boxName);
+    final entry = box.values.toList().asMap().entries.firstWhere(
+      (e) => e.value.id == taskId,
+      orElse: () => throw Exception('Task with ID $taskId not found.'),
+    );
+
+    final index = entry.key;
+    final task = entry.value;
+
+    if (task.isCompleted) {
+      // print('Task with ID $taskId is already completed.');
+      return;
+    }
+    final updatedTask = Task(
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      dateTime: task.dateTime,
+      isCompleted: true,
+      completionTime: DateTime.now(),
+      recurrence: task.recurrence,
+    );
+    await box.putAt(index, updatedTask);
+    // print('Task with ID $taskId marked as completed.');
+  }
 }

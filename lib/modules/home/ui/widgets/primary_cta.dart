@@ -28,7 +28,7 @@ class PrimaryCta extends StatelessWidget {
             ? context.isLightTheme
                   ? AppColors.colorNeutral500
                   : AppColors.colorNeutralDark500
-            : color ?? AppColors.primary400,
+            : color ?? Colors.green,
         textStyle: context.textTheme.labelLarge,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       ),
@@ -40,8 +40,8 @@ class PrimaryCta extends StatelessWidget {
             label.toString(),
             style: context.textTheme.bodySmall?.withAdaptiveColor(
               context,
-              lightColor: AppColors.colorNeutral50,
-              darkColor: AppColors.white,
+              lightColor: AppColors.colorNeutral900,
+              darkColor: AppColors.colorNeutralDark900,
             ),
           ),
         ),

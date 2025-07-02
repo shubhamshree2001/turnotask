@@ -13,27 +13,53 @@ import 'package:turnotask/modules/home/ui/widgets/set_app_theme_bottomsheet.dart
 import 'package:turnotask/widgets/kapp_widget.dart';
 
 class TaskPage extends StatefulWidget {
-  const TaskPage({super.key});
+  final int? notificationTaskId;
+
+  const TaskPage({super.key, this.notificationTaskId});
+
+  static pushReplacement(context, [int? notificationTaskId]) =>
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              TaskPage(notificationTaskId: notificationTaskId),
+        ),
+      );
 
   @override
   State<TaskPage> createState() => _TaskPageState();
 }
 
-class _TaskPageState extends State<TaskPage> {
+class _TaskPageState extends State<TaskPage> with WidgetsBindingObserver {
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('Called applifecycle');
+    if (state == AppLifecycleState.resumed) {
+      updateDataNeeded();
+      print('Called applifecycle resumed');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    //NotificationService().registerMarkDoneCallback(_markAsCompletedFromNotification);
+    WidgetsBinding.instance.addObserver(this);
+    // NotificationService().registerMarkDoneCallback((taskId) {
+      //debugPrint('Marking task ${widget.notificationTaskId} as done!');
+    //});
   }
 
-  // void _markAsCompletedFromNotification(int taskId) async {
-  //   final index = _tasksBox.values.toList().indexWhere((t) => t.id == taskId);
-  //   if (index != -1) {
-  //     final task = _tasksBox.getAt(index);
-  //     if (task != null && !task.isCompleted) {
-  //       _markAsCompleted(task, index);
-  //     }
-  //   }
+
+  void updateDataNeeded() {
+    final HomeCubit homeCubit = context.read<HomeCubit>();
+    homeCubit.updateTaskData();
+  }
+
+  // @override
+  // void dispose() {
+  //   WidgetsBinding.instance.removeObserver(this);
+  //   super.dispose();
   // }
 
   @override
@@ -41,8 +67,9 @@ class _TaskPageState extends State<TaskPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
-        onPressed: () {
+        onPressed: () async {
           kAppShowModalBottomSheet(context, const CreateTaskBottomSheet());
+          //await TaskCacheManager.findTaskById(1751481024);
         },
         tooltip: 'Add Task',
         child: const Icon(Icons.add),
@@ -160,7 +187,10 @@ class _TaskPageState extends State<TaskPage> {
                   Gap(4.w),
                   taskDetailText(task.description, context),
                   Gap(4.w),
-                  taskDetailText('Created on ${homeCubit.formatDateTime(task.dateTime.toString())}', context),
+                  taskDetailText(
+                    'Reminder added for ${homeCubit.formatDateTime(task.dateTime.toString())}',
+                    context,
+                  ),
                   if (task.isCompleted && task.completionTime != null)
                     taskDetailText(
                       'Completed on ${homeCubit.formatDateTime(task.completionTime.toString())}',
@@ -221,4 +251,5 @@ class _TaskPageState extends State<TaskPage> {
       ),
     );
   }
+
 }

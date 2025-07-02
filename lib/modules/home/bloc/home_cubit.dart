@@ -4,11 +4,15 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turnotask/data/cache/task_cache_manager.dart';
+import 'package:turnotask/data/utils/app_storage.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
+import 'package:turnotask/services/get_it_service.dart';
 import 'package:turnotask/services/notification_service.dart';
 
 part 'home_cubit.g.dart';
+
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -83,6 +87,20 @@ class HomeCubit extends Cubit<HomeState> {
     await TaskCacheManager.updateTask(index, updatedTask);
     await loadAndCacheTask();
     HapticFeedback.mediumImpact();
+  }
+
+  Future<void> updateTaskData() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    // int? taskId = await turnoStorage.getNotificationTaskId();
+    final prefs = await SharedPreferences.getInstance();
+    int? taskId = prefs.getInt('notificationTaskID');
+    print("task id : $taskId");
+    if (taskId != null && taskId != -1) {
+      await TaskCacheManager.markTaskAsCompletedById(taskId);
+      // await turnoStorage.remove(TurnoStorageKeys.notificationTaskId);
+      gPrefs.clear();
+      await loadAndCacheTask();
+    }
   }
 
   String formatDateTime(String dateTimeString) {

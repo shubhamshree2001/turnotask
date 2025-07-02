@@ -11,6 +11,8 @@ import 'package:turnotask/services/notification_service.dart';
 
 import 'modules/home/bloc/home_cubit.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
@@ -51,6 +53,7 @@ class TurnoTaskApp extends StatelessWidget {
                     child: child!,
                   );
                 },
+                navigatorKey: navigatorKey,
                 title: 'Turno Task',
                 debugShowCheckedModeBanner: false,
                 themeMode: themeCubit.mapThemeMode(state.themeMode),

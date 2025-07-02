@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turnotask/data/cache/task_cache_manager.dart';
 import 'package:turnotask/data/routes/app_routes.dart';
 import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
+import 'package:turnotask/data/utils/app_storage.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
+import 'package:turnotask/services/get_it_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,10 +33,21 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> insideInitCalledFnc(HomeCubit homeCubit) async {
+    // int? taskId = await turnoStorage.getNotificationTaskId();
+    int taskId = gPrefs.getNotificationTaskId();
+    if(taskId != -1){
+      await TaskCacheManager.markTaskAsCompletedById(taskId);
+      gPrefs.clear();
+     // await clearNotificationTaskId();
+    }
     await Future.wait([homeCubit.loadAndCacheTask()]);
     if (!hasNavigated && mounted) {
       _navigate();
     }
+  }
+
+  Future<void> clearNotificationTaskId() async {
+    await turnoStorage.remove(TurnoStorageKeys.notificationTaskId);
   }
 
   void _navigate() async {
