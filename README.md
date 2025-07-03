@@ -1,107 +1,166 @@
-
 # 📋 Task Manager App
 
-A simple cross-platform Task Manager app built in Flutter (or your framework) that allows users to create, view, and manage tasks with native notifications and platform-specific enhancements.
+A simple cross-platform **Task Manager** built with **Flutter**. Create, view, and manage tasks with **native local notifications** implemented using **platform channels** — **no third-party notification package** required!
 
 ---
 
 ## ✨ **Core Features**
 
-✅ **Add Tasks**
-- Create tasks with a title, description, and reminder time.
+✅ **Add Tasks**\
+Create tasks with a title, description, and reminder time.
 
-✅ **View Tasks**
-- View all tasks with their scheduled reminders.
+✅ **View Tasks**\
+View all tasks with their scheduled reminders.
 
-✅ **Schedule Notifications**
-- Native notifications for reminders:
-    - **iOS:** Uses iOS native notification API.
-    - **Android:** Uses Android native notification API with action buttons.
+✅ **Native Local Notifications** *(No Package)*
 
-✅ **Date & Time Selection**
-- Uses native pickers for date and time:
-    - **iOS:** Native iOS picker.
-    - **Android:** Native Android picker.
+- iOS: Uses **UNUserNotificationCenter** via **method channels**.
+- Android: Uses **AlarmManager** + **BroadcastReceiver** with method channels.
+- Notifications work even if the app is closed.
+- Android supports **action buttons** and persists after reboot.
 
-✅ **Task Completion & History**
-- Mark tasks as completed.
-- View a log/history of completed tasks, with completion time.
-- Completed tasks are visually marked or moved to a “Completed” section.
+✅ **Date & Time Selection**\
+Uses native date & time pickers with platform styling.
 
-✅ **Platform-Specific Enhancements**
-- 📱 **iOS:**
-    - Custom message with task title in notifications.
-    - Haptic feedback when tasks are added or deleted.
-- 🤖 **Android:**
-    - Notifications include action buttons (e.g., "Mark as Done").
-    - Notifications persist after app closure or device reboot.
+✅ **Task Completion & History**\
+Mark tasks as completed and view a log with timestamps.
 
-✅ **Bonus Features**
+✅ **Platform Enhancements**
+
+- 📱 **iOS:** Custom payloads & haptic feedback on task actions.
+- 🤖 **Android:** Persistent notifications, action buttons, and boot receivers.
+
+✅ **Bonus**
+
 - 🔄 Recurring tasks (daily, weekly, monthly).
-- 🌙 Dark Mode (auto-adapts to system theme).
-- 🔔 Notification Actions (mark complete or snooze directly from notifications).
+- 🌙 Dark Mode follows system theme.
+- 🔔 Notification actions: Mark complete or snooze (Android).
 
 ---
 
 ## 🚀 **Setup & Installation**
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/your-task-manager-app.git
-   cd your-task-manager-app
-   ```
+### 1️⃣ Clone the Repository
 
-2. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
+```bash
+git clone https://github.com/shubhamshree2001/turnotask.git
+cd task-manager-app
+```
 
-3. **Platform-specific setup:**
+### 2️⃣ Install Dependencies
 
-    - **iOS:**
-        - Add notification permissions to `Info.plist`.
-        - Ensure Push Notifications capability is enabled.
-        - Test on a real device for haptic feedback.
-
-    - **Android:**
-        - Configure `AndroidManifest.xml` for notification and boot permissions:
-          ```xml
-          <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-          <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-          ```
-        - Add required broadcast receivers for persistent notifications.
-        - Test on a real device for notification actions.
-
-4. **Run the app:**
-   ```bash
-   flutter run
-   ```
+```bash
+flutter pub get
+```
 
 ---
 
-## ⚙️ **Platform-Specific Implementations**
+## ✅ **Native Notification Setup (No Package)**
 
-- **Notifications:**
-    - iOS: Uses `flutter_local_notifications` with iOS-specific configurations for custom alerts and haptics.
-    - Android: Uses `flutter_local_notifications` with action buttons and boot persistence using `RECEIVE_BOOT_COMPLETED`.
+### 📱 **iOS Setup**
 
-- **Date & Time Pickers:**
-    - Uses `showDatePicker` and `showTimePicker` with platform-specific styling.
+1. **Permissions in **``
 
-- **Haptic Feedback:**
-    - iOS-specific haptics using `HapticFeedback` API.
+   ```xml
+   <key>UIBackgroundModes</key>
+   <array>
+     <string>fetch</string>
+     <string>remote-notification</string>
+   </array>
+   <key>NSUserNotificationUsageDescription</key>
+   <string>We use notifications to remind you about your tasks.</string>
+   ```
 
-- **Dark Mode:**
-    - Uses `ThemeMode.system` to adapt to system-wide theme changes.
+2. **Platform Channels**
+
+    - Implement `UNUserNotificationCenter` scheduling in `AppDelegate.swift`.
+    - Set up `FlutterMethodChannel` to handle `scheduleNotification` and `cancelNotification`.
+
+3. **Haptics**
+
+    - Use Flutter’s `HapticFeedback` for tactile actions.
+
 
 ---
 
-## ⚡️ **Challenges & Trade-offs**
+### 🤖 **Android Setup**
 
-- Handling **persistent notifications** on Android required setting up boot receivers and ensuring proper background execution, which can vary by device manufacturers.
-- Ensuring **consistent behavior** across iOS and Android for notification actions and haptics took extra testing time.
-- Recurring tasks required additional logic to re-schedule notifications accurately.
-- iOS notification action buttons are more limited than Android’s.
+1. **Permissions in **``
+
+   ```xml
+   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+   <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+   ```
+
+2. **Receivers in **``
+
+   ```xml
+   <receiver
+       android:name=".NotificationReceiver"
+       android:exported="false" />
+   <receiver
+       android:name=".NotificationBootReceiver"
+       android:enabled="true"
+       android:exported="false">
+       <intent-filter>
+           <action android:name="android.intent.action.BOOT_COMPLETED"/>
+       </intent-filter>
+   </receiver>
+   ```
+
+3. **Platform Channels**
+
+    - Use `AlarmManager` to schedule alarms.
+    - Create `BroadcastReceiver` to trigger notifications.
+    - Reschedule alarms after reboot with `BOOT_COMPLETED`.
+
+
+
+---
+
+## ✅ **Sample Flutter Method Channel**
+
+```dart
+import 'package:flutter/services.dart';
+
+class NotificationHelper {
+  static const MethodChannel _channel = MethodChannel('com.yourapp/notifications');
+
+  static Future<void> scheduleNotification({required Task task}) async {
+    await _channel.invokeMethod('scheduleNotification', {
+      'id': task.id,
+      'title': task.title,
+      'body': task.description,
+      'timestamp': task.dateTime.millisecondsSinceEpoch,
+      'repeatInterval': task.recurrence.name ?? 'once',
+    });
+  }
+
+  static Future<void> cancelNotification(int id) async {
+    await _channel.invokeMethod('cancelNotification', {'id': id});
+  }
+}
+```
+
+---
+
+## ⚙️ **Platform-Specific Behavior**
+
+| Feature              | iOS                        | Android                                                |
+| -------------------- | -------------------------- | ------------------------------------------------------ |
+| Notifications        | UNUserNotificationCenter   | AlarmManager + BroadcastReceiver + NotificationManager |
+| Boot Persistence     | N/A (handled by system)    | Boot receiver to re-schedule alarms                    |
+| Notification Actions | Limited                    | Action buttons supported                               |
+| Haptics              | Flutter HapticFeedback API | Flutter HapticFeedback API                             |
+| Dark Mode            | `ThemeMode.system`         | `ThemeMode.system`                                     |
+
+---
+
+## ⚡️ **Challenges**
+
+- 🧩 Managing native code for two platforms adds complexity.
+- 📱 Real device testing required for notifications & boot persistence.
+- 🔐 Requires proper permissions, especially on Android 13+ (`POST_NOTIFICATIONS`).
 
 ---
 
@@ -113,6 +172,7 @@ A simple cross-platform Task Manager app built in Flutter (or your framework) th
 - Recommended:
     - Always test **notifications and haptics on real devices** for best accuracy.
     - Check dark mode on both system themes.
-
 ---
+
+
 
