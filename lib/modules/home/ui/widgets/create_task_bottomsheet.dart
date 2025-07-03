@@ -57,6 +57,20 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                     darkColor: AppColors.colorNeutralDark900,
                   ),
                 ),
+                if (homeCubit.state.selectedDateTime != null &&
+                    homeCubit.state.selectedDateTime!.isBefore(
+                      DateTime.now(),
+                    )) ...[
+                  Gap(8.h),
+                  Text(
+                    "*Please select a future date & time",
+                    style: context.textTheme.bodySmall?.withAdaptiveColor(
+                      context,
+                      lightColor: Colors.red,
+                      darkColor: Colors.red,
+                    ),
+                  ),
+                ],
                 Gap(12.h),
                 PrimaryCta(
                   onTap: () {
@@ -90,7 +104,11 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                   isButtonDisable:
                       homeCubit.titleController.text.isEmpty ||
                       homeCubit.descriptionController.text.isEmpty ||
-                      homeCubit.state.selectedDateTime == null,
+                      homeCubit.state.selectedDateTime == null ||
+                      (homeCubit.state.selectedDateTime != null &&
+                          homeCubit.state.selectedDateTime!.isBefore(
+                            DateTime.now(),
+                          )),
                   onTap: () async {
                     await homeCubit.addTask(context);
                   },
