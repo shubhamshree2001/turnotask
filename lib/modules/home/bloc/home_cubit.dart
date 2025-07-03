@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turnotask/data/cache/task_cache_manager.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/services/get_it_service.dart';
-import 'package:turnotask/services/notification_service.dart';
+import 'package:turnotask/services/notification_helper.dart';
 
 part 'home_cubit.g.dart';
 
@@ -23,9 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
   final TextEditingController descriptionController = TextEditingController();
 
   Future<void> checkHasNotificationPermission() async {
-    bool hasPermission = await NotificationService()
-        .checkExactAlarmPermission();
-    // print("hasPermission1 : $hasPermission");
+    bool hasPermission = await NotificationHelper.hasExactAlarmPermission();
     emit(state.copyWith(hasNotificationPermission: hasPermission));
   }
 
@@ -66,7 +64,11 @@ class HomeCubit extends Cubit<HomeState> {
       dateTime: state.selectedDateTime!,
       recurrence: state.selectedRecurrence,
     );
-    await NotificationService().scheduleNotification(newTask);
+    if (Platform.isAndroid) {
+      await NotificationHelper.scheduleNotification(task: newTask);
+    } else {
+      await NotificationHelper.scheduleNotificationIos(task: newTask);
+    }
     await TaskCacheManager.saveTask(newTask);
     HapticFeedback.mediumImpact();
     await loadAndCacheTask();
@@ -100,8 +102,8 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> updateTaskData() async {
     await Future.delayed(const Duration(milliseconds: 200));
     // int? taskId = await turnoStorage.getNotificationTaskId();
-    final prefs = await SharedPreferences.getInstance();
-    int? taskId = prefs.getInt('notificationTaskID');
+    final refreshedPrefs = await SharedPreferences.getInstance();
+    int taskId = refreshedPrefs.getInt('flutter.notificationTaskID') ?? -1;
     print("task id : $taskId");
     if (taskId != null && taskId != -1) {
       await TaskCacheManager.markTaskAsCompletedById(taskId);
@@ -113,11 +115,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   String formatDateTime(String dateTimeString) {
     final dateTime = DateTime.parse(dateTimeString);
-
-    final day = DateFormat('d').format(dateTime); // 2
-    final month = DateFormat('MMMM').format(dateTime); // July
-    final time = DateFormat('h:mm a').format(dateTime); // 10:37 PM
-
+    final day = DateFormat('d').format(dateTime);
+    final month = DateFormat('MMMM').format(dateTime);
+    final time = DateFormat('h:mm a').format(dateTime);
     return '$day $month at $time';
   }
 }

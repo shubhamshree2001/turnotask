@@ -7,8 +7,9 @@ import 'package:turnotask/data/routes/app_routes.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/data/theme/bloc/theme_cubit.dart';
 import 'package:turnotask/services/get_it_service.dart';
-import 'package:turnotask/services/notification_service.dart';
+import 'package:turnotask/services/notification_helper.dart';
 
+import 'data/cache/task_cache_manager.dart';
 import 'modules/home/bloc/home_cubit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -17,7 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await setup();
-  await NotificationService().init();
+  await TaskCacheManager.handleBootReschedule();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

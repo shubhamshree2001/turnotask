@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
-import 'package:turnotask/services/notification_service.dart';
+import 'package:turnotask/services/notification_helper.dart';
 
 class TaskCacheManager {
   static const String boxName = 'tasksBox';
@@ -19,7 +21,13 @@ class TaskCacheManager {
     var box = Hive.box<Task>(boxName);
     final task = box.getAt(index);
     if (task != null) {
-      await NotificationService().cancelNotification(task.id);
+      if (Platform.isAndroid) {
+        await NotificationHelper.cancelScheduledNotification(task.id);
+      } else {
+        await NotificationHelper.cancelScheduledNotificationIos(
+          task.id.toString(),
+        );
+      }
     }
     await box.deleteAt(index);
   }
@@ -54,6 +62,18 @@ class TaskCacheManager {
       recurrence: task.recurrence,
     );
     await box.putAt(index, updatedTask);
-    // print('Task with ID $taskId marked as completed.');
+    print('Task with ID $taskId marked as completed.');
+  }
+
+  static Future<void> handleBootReschedule() async {
+    final tasks = TaskCacheManager.loadTask();
+    final now = DateTime.now();
+
+    for (var task in tasks) {
+      if (!task.isCompleted && task.dateTime.isAfter(now)) {
+        await NotificationHelper.scheduleNotification(task: task);
+      }
+      // else skip tasks in the past
+    }
   }
 }
