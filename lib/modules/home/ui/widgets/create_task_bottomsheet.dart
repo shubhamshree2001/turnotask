@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,7 +77,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 Gap(12.h),
                 PrimaryCta(
                   onTap: () {
-                    _pickDateTime(homeCubit);
+                    _pickDateTime(context, homeCubit);
                   },
                   label: 'Pick Date & Time',
                 ),
@@ -123,26 +126,71 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     );
   }
 
-  Future<void> _pickDateTime(HomeCubit homeCubit) async {
-    final date = await showDatePicker(
-      context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-      initialDate: DateTime.now(),
-    );
-    if (!context.mounted || date == null) return;
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (!context.mounted || time == null) return;
-    DateTime selectedDateTime = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
-    homeCubit.setSelectedDateTimeForTask(selectedDateTime);
+  Future<void> _pickDateTime(BuildContext context, HomeCubit homeCubit) async {
+    if (Platform.isIOS) {
+      DateTime now = DateTime.now();
+      DateTime minimumDate = now;
+      DateTime initialDateTime = now.isBefore(minimumDate) ? minimumDate : now;
+      DateTime? selectedDateTime = await showCupertinoModalPopup<DateTime>(
+        context: context,
+        builder: (_) {
+          DateTime tempPickedDate = initialDateTime;
+          return Container(
+            color: CupertinoColors.systemBackground.resolveFrom(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.dateAndTime,
+                    initialDateTime: initialDateTime,
+                    minimumDate: minimumDate,
+                    maximumDate: DateTime(2100),
+                    onDateTimeChanged: (DateTime newDateTime) {
+                      tempPickedDate = newDateTime;
+                    },
+                  ),
+                ),
+                CupertinoButton(
+                  child: const Text('Done'),
+                  onPressed: () {
+                    Navigator.of(context).pop(tempPickedDate);
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (selectedDateTime != null) {
+        homeCubit.setSelectedDateTimeForTask(selectedDateTime);
+      }
+    } else {
+      final date = await showDatePicker(
+        context: context,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2100),
+        initialDate: DateTime.now(),
+      );
+      if (!context.mounted || date == null) return;
+
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (!context.mounted || time == null) return;
+
+      final selectedDateTime = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+
+      homeCubit.setSelectedDateTimeForTask(selectedDateTime);
+    }
   }
 }
