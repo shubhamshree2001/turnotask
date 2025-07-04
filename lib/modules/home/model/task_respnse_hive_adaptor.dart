@@ -7,16 +7,30 @@ class TaskAdapter extends TypeAdapter<Task> {
 
   @override
   Task read(BinaryReader reader) {
+    final id = reader.readInt();
+    final title = reader.readString();
+    final description = reader.readString();
+    final hasDateTime = reader.readBool();
+    final dateTime = hasDateTime
+        ? DateTime.fromMillisecondsSinceEpoch(reader.readInt())
+        : null;
+
+    final isCompleted = reader.readBool();
+    final hasCompletionTime = reader.readBool();
+    final completionTime = hasCompletionTime
+        ? DateTime.fromMillisecondsSinceEpoch(reader.readInt())
+        : null;
+    final recurrenceIndex = reader.readInt();
+    final recurrence = Recurrence.values[recurrenceIndex];
+
     return Task(
-      id: reader.readInt(),
-      title: reader.readString(),
-      description: reader.readString(),
-      dateTime: DateTime.fromMillisecondsSinceEpoch(reader.readInt()),
-      isCompleted: reader.readBool(),
-      completionTime: reader.readBool()
-          ? DateTime.fromMillisecondsSinceEpoch(reader.readInt())
-          : null,
-      recurrence: Recurrence.values[reader.readInt()],
+      id: id,
+      title: title,
+      description: description,
+      dateTime: dateTime,
+      isCompleted: isCompleted,
+      completionTime: completionTime,
+      recurrence: recurrence,
     );
   }
 
@@ -25,7 +39,12 @@ class TaskAdapter extends TypeAdapter<Task> {
     writer.writeInt(obj.id);
     writer.writeString(obj.title);
     writer.writeString(obj.description);
-    writer.writeInt(obj.dateTime.millisecondsSinceEpoch);
+    if (obj.dateTime != null) {
+      writer.writeBool(true);
+      writer.writeInt(obj.dateTime!.millisecondsSinceEpoch);
+    } else {
+      writer.writeBool(false);
+    }
     writer.writeBool(obj.isCompleted);
     if (obj.completionTime != null) {
       writer.writeBool(true);

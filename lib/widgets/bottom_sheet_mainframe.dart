@@ -42,7 +42,7 @@ class BottomSheetMainFrame extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.isLightTheme
                 ? AppColors.white
-                : AppColors.bgColorDark,
+                : AppColors.backgroundDark,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
           ),
           child: Column(

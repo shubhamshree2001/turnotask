@@ -5,33 +5,55 @@ import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/values/text_styles.dart';
 
 class AppTheme {
+  static MaterialColor generateMaterialColor(Color color) {
+    return MaterialColor(
+      color.value,
+      <int, Color>{
+        50: _tintColor(color, 0.9),
+        100: _tintColor(color, 0.8),
+        200: _tintColor(color, 0.6),
+        300: _tintColor(color, 0.4),
+        400: _tintColor(color, 0.2),
+        500: color,
+        600: _shadeColor(color, 0.1),
+        700: _shadeColor(color, 0.2),
+        800: _shadeColor(color, 0.3),
+        900: _shadeColor(color, 0.4),
+      },
+    );
+  }
+
+  static Color _tintColor(Color color, double factor) => Color.fromRGBO(
+    color.red + ((255 - color.red) * factor).round(),
+    color.green + ((255 - color.green) * factor).round(),
+    color.blue + ((255 - color.blue) * factor).round(),
+    1,
+  );
+
+  static Color _shadeColor(Color color, double factor) => Color.fromRGBO(
+    (color.red * (1 - factor)).round(),
+    (color.green * (1 - factor)).round(),
+    (color.blue * (1 - factor)).round(),
+    1,
+  );
+
+
   static final darkTheme = ThemeData(
     fontFamily: 'Inter',
-    primaryColor: AppColors.primaryDark50,
+    primaryColor: AppColors.primaryColor,
     colorScheme: const ColorScheme.dark(
-      primary: AppColors.primaryDark400,
+      primary: AppColors.primaryColor,
       secondary: AppColors.colorNeutralDark300,
-      surface: AppColors.bgColorDark,
+      surface: AppColors.backgroundDark,
       error: Colors.red,
     ),
     primarySwatch:
-        MaterialColor(AppColors.primaryDark400.toARGB32(), const <int, Color>{
-          50: AppColors.primaryDark50,
-          100: AppColors.primaryDark100,
-          200: AppColors.primaryDark200,
-          300: AppColors.primaryDark300,
-          400: AppColors.primaryDark400,
-          500: AppColors.primaryDark500,
-          600: AppColors.primaryDark600,
-          700: AppColors.primaryDark700,
-          800: AppColors.primaryDark800,
-          900: AppColors.primaryDark900,
-        }),
+    generateMaterialColor(AppColors.primaryColor),
     brightness: Brightness.dark,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.colorNeutralDark700,
-      selectionColor: AppColors.primaryDark100,
-      selectionHandleColor: AppColors.primaryDark300,
+      selectionColor: AppColors.primaryColor,
+      selectionHandleColor: AppColors.primaryColor,
     ),
     useMaterial3: true,
     textTheme: TextTheme(
@@ -42,7 +64,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryDark400,
+        backgroundColor: AppColors.primaryColor,
         textStyle: TurnoTextStyle.aller14Inter600,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       ),
@@ -54,12 +76,12 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.w),
-        borderSide: const BorderSide(color: AppColors.primaryDark100),
+        borderSide: const BorderSide(color: AppColors.primaryColor),
       ),
     ),
-    scaffoldBackgroundColor: AppColors.bgColorDark,
+    scaffoldBackgroundColor: AppColors.backgroundDark,
     appBarTheme: AppBarTheme(
-      backgroundColor: AppColors.bgColorDark,
+      backgroundColor: AppColors.primaryColor.withOpacity(0.4),
       titleTextStyle: TurnoTextStyle.aller18Inter600,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       elevation: 0,
@@ -72,31 +94,20 @@ class AppTheme {
 
   static final lightTheme = ThemeData(
     fontFamily: 'Inter',
-    primaryColor: AppColors.primary400,
+    primaryColor: AppColors.primaryColor,
     colorScheme: const ColorScheme.light(
-      primary: AppColors.primary400,
+      primary: AppColors.primaryColor,
       secondary: AppColors.colorNeutral300,
       surface: AppColors.bgColor,
       error: Colors.red,
     ),
     primarySwatch:
-        MaterialColor(AppColors.primary400.toARGB32(), const <int, Color>{
-          50: AppColors.primary50,
-          100: AppColors.primary100,
-          200: AppColors.primary200,
-          300: AppColors.primary300,
-          400: AppColors.primary400,
-          500: AppColors.primary500,
-          600: AppColors.primary600,
-          700: AppColors.primary700,
-          800: AppColors.primary800,
-          900: AppColors.primary900,
-        }),
+    generateMaterialColor(AppColors.primaryColor),
     brightness: Brightness.light,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.colorNeutral700,
-      selectionColor: AppColors.primary100,
-      selectionHandleColor: AppColors.primary300,
+      selectionColor: AppColors.primaryColor,
+      selectionHandleColor: AppColors.primaryColor,
     ),
     useMaterial3: true,
     textTheme: TextTheme(
@@ -107,7 +118,7 @@ class AppTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary400,
+        backgroundColor: AppColors.primaryColor,
         textStyle: TurnoTextStyle.aller14Inter600,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.w)),
       ),
@@ -119,7 +130,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.w),
-        borderSide: const BorderSide(color: AppColors.primary100),
+        borderSide: const BorderSide(color: AppColors.primaryColor),
       ),
     ),
     scaffoldBackgroundColor: AppColors.bgColor,

@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final HomeCubit homeCubit = context.read<HomeCubit>();
       if (Platform.isAndroid) {
-        await homeCubit.checkHasNotificationPermission();
+        await homeCubit.checkHasExactAlarmNotificationPermission();
       }
     });
     // NotificationService().registerMarkDoneCallback((taskId) {
@@ -69,15 +69,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void updateNotificationPermission() {
     if (Platform.isAndroid) {
       final HomeCubit homeCubit = context.read<HomeCubit>();
-      homeCubit.checkHasNotificationPermission();
+      homeCubit.checkHasExactAlarmNotificationPermission();
     }
   }
 
-  // @override
-  // void dispose() {
-  //   WidgetsBinding.instance.removeObserver(this);
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    final HomeCubit homeCubit = context.read<HomeCubit>();
+    homeCubit.descriptionController.dispose();
+    homeCubit.titleController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,37 +89,36 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         final HomeCubit homeCubit = context.read<HomeCubit>();
         return Scaffold(
           floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.green,
             onPressed: () async {
-              if (Platform.isAndroid) {
-                if (homeCubit.state.hasNotificationPermission) {
-                  kAppShowModalBottomSheet(
-                    context,
-                    const CreateTaskBottomSheet(),
-                  );
-                } else {
-                  kAppShowDialog(
-                    context,
-                    whenComplete: () {},
-                    builder: (dialogContext) {
-                      return NotificationPermissionDialogue(
-                        dialogContext: dialogContext,
-                      );
-                    },
-                  );
-                }
-              } else {
-                kAppShowModalBottomSheet(
-                  context,
-                  const CreateTaskBottomSheet(),
-                );
-              }
+              // if (Platform.isAndroid) {
+              //   if (homeCubit.state.hasNotificationPermission) {
+              //     kAppShowModalBottomSheet(
+              //       context,
+              //       const CreateTaskBottomSheet(),
+              //     );
+              //   } else {
+              //     kAppShowDialog(
+              //       context,
+              //       whenComplete: () {},
+              //       builder: (dialogContext) {
+              //         return NotificationPermissionDialogue(
+              //           dialogContext: dialogContext,
+              //         );
+              //       },
+              //     );
+              //   }
+              // } else {
+              //   kAppShowModalBottomSheet(
+              //     context,
+              //     const CreateTaskBottomSheet(),
+              //   );
+              // }
+              kAppShowModalBottomSheet(context, const CreateTaskBottomSheet());
             },
             tooltip: 'Add Task',
             child: const Icon(Icons.add),
           ),
           appBar: AppBar(
-            backgroundColor: context.isLightTheme ? Colors.green : Colors.green,
             elevation: 6,
             title: Text(
               'TurnoTask',
@@ -193,70 +195,98 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            task.isCompleted
-                ? Container(
-                    width: 16.w,
-                    height: 16.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: task.isCompleted ? Colors.green : Colors.orange,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    task.isCompleted
+                        ? Container(
+                            width: 16.w,
+                            height: 16.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.green,
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              size: 16.w,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Icon(Icons.pending_actions, color: Colors.orange),
+                    Gap(12.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task.title,
+                          style: context.textTheme.labelLarge
+                              ?.withAdaptiveColor(
+                                context,
+                                lightColor: AppColors.colorNeutral900,
+                                darkColor: AppColors.colorNeutral900,
+                              ),
+                        ),
+                        Gap(4.w),
+                        taskDetailText(task.description, context),
+                      ],
                     ),
-                    child: Icon(Icons.check, size: 16.w, color: Colors.white),
-                  )
-                : Icon(Icons.pending_actions, color: Colors.orange),
-            Gap(12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                  ],
+                ),
+                Gap(8.w),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  tooltip: 'Delete',
+                  onPressed: () async {
+                    await homeCubit.deleteTask(index);
+                  },
+                ),
+              ],
+            ),
+            if (task.dateTime != null) ...[
+              Gap(4.w),
+              taskDetailText(
+                'Reminder added for ${homeCubit.formatDateTime(task.dateTime.toString())}',
+                context,
+              ),
+            ],
+            if (task.isCompleted && task.completionTime != null) ...[
+              Gap(4.w),
+              taskDetailText(
+                'Completed on ${homeCubit.formatDateTime(task.completionTime.toString())}',
+                context,
+              ),
+            ],
+            if (task.recurrence != Recurrence.none) ...[
+              Gap(4.w),
+              taskDetailText(
+                'Recurrence: ${task.recurrence.name.toUpperCase()}',
+                context,
+              ),
+            ],
+            if (!task.isCompleted) ...[
+              Gap(8.w),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    task.title,
-                    style: context.textTheme.labelLarge?.withAdaptiveColor(
-                      context,
-                      lightColor: AppColors.colorNeutral900,
-                      darkColor: AppColors.colorNeutral900,
-                    ),
-                  ),
-                  Gap(4.w),
-                  taskDetailText(task.description, context),
-                  Gap(4.w),
-                  taskDetailText(
-                    'Reminder added for ${homeCubit.formatDateTime(task.dateTime.toString())}',
-                    context,
-                  ),
-                  if (task.isCompleted && task.completionTime != null)
-                    taskDetailText(
-                      'Completed on ${homeCubit.formatDateTime(task.completionTime.toString())}',
-                      context,
-                    ),
-                  Gap(4.w),
-                  taskDetailText(
-                    'Recurrence: ${task.recurrence.name.toUpperCase()}',
-                    context,
+                  PrimaryCta(
+                    onTap: () {
+                      homeCubit.markAsCompleted(task, index);
+                    },
+                    label: "Mark Done",
+                    color: Colors.orange.withOpacity(0.8),
                   ),
                 ],
               ),
-            ),
-            Gap(8.w),
-            if (!task.isCompleted)
-              PrimaryCta(
-                onTap: () {
-                  homeCubit.markAsCompleted(task, index);
-                },
-                label: "Done",
-                color: Colors.orange,
-              ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              tooltip: 'Delete',
-              onPressed: () async {
-                await homeCubit.deleteTask(index);
-              },
-            ),
+            ],
           ],
         ),
       ),

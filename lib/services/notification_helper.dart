@@ -43,7 +43,7 @@ class NotificationHelper {
       'id': task.id,
       'title': task.title,
       'body': task.description,
-      'timestamp': task.dateTime.millisecondsSinceEpoch,
+      'timestamp': task.dateTime?.millisecondsSinceEpoch,
       'repeatInterval': task.recurrence.name ?? 'once',
     });
   }
@@ -53,7 +53,7 @@ class NotificationHelper {
       'id': task.id.toString(),
       'title': task.title,
       'body': task.description,
-      'timestamp': task.dateTime.millisecondsSinceEpoch.toDouble(),
+      'timestamp': task.dateTime?.millisecondsSinceEpoch.toDouble(),
       'repeatInterval': task.recurrence.name ?? 'once',
     });
   }

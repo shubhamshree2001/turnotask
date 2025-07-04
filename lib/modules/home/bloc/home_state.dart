@@ -8,14 +8,18 @@ class HomeState extends Equatable {
   final Recurrence selectedRecurrence;
   final List<Task> allTask;
   final bool hasNotificationPermission;
+  final String? title;
+  final String? desc;
 
   const HomeState({
     this.isLoading = false,
     this.error,
     this.selectedDateTime,
-    this.selectedRecurrence = Recurrence.once,
+    this.selectedRecurrence = Recurrence.none,
     this.allTask = const [],
     this.hasNotificationPermission = false,
+    this.title,
+    this.desc,
   });
 
   @override
@@ -26,5 +30,7 @@ class HomeState extends Equatable {
     selectedRecurrence,
     allTask,
     hasNotificationPermission,
+    title,
+    desc
   ];
 }

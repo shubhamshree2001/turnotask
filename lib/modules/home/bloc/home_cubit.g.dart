@@ -19,6 +19,10 @@ abstract class _$HomeStateCWProxy {
 
   HomeState hasNotificationPermission(bool hasNotificationPermission);
 
+  HomeState title(String? title);
+
+  HomeState desc(String? desc);
+
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `HomeState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -32,6 +36,8 @@ abstract class _$HomeStateCWProxy {
     Recurrence selectedRecurrence,
     List<Task> allTask,
     bool hasNotificationPermission,
+    String? title,
+    String? desc,
   });
 }
 
@@ -63,6 +69,12 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
       this(hasNotificationPermission: hasNotificationPermission);
 
   @override
+  HomeState title(String? title) => this(title: title);
+
+  @override
+  HomeState desc(String? desc) => this(desc: desc);
+
+  @override
   /// This function **does support** nullification of nullable fields. All `null` values passed to `non-nullable` fields will be ignored. You can also use `HomeState(...).copyWith.fieldName(...)` to override fields one at a time with nullification support.
   ///
   /// Usage
@@ -76,6 +88,8 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
     Object? selectedRecurrence = const $CopyWithPlaceholder(),
     Object? allTask = const $CopyWithPlaceholder(),
     Object? hasNotificationPermission = const $CopyWithPlaceholder(),
+    Object? title = const $CopyWithPlaceholder(),
+    Object? desc = const $CopyWithPlaceholder(),
   }) {
     return HomeState(
       isLoading: isLoading == const $CopyWithPlaceholder()
@@ -103,6 +117,14 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
           ? _value.hasNotificationPermission
           // ignore: cast_nullable_to_non_nullable
           : hasNotificationPermission as bool,
+      title: title == const $CopyWithPlaceholder()
+          ? _value.title
+          // ignore: cast_nullable_to_non_nullable
+          : title as String?,
+      desc: desc == const $CopyWithPlaceholder()
+          ? _value.desc
+          // ignore: cast_nullable_to_non_nullable
+          : desc as String?,
     );
   }
 }

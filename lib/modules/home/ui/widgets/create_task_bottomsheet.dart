@@ -9,8 +9,10 @@ import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
+import 'package:turnotask/modules/home/ui/widgets/notification_permission_dialogue.dart';
 import 'package:turnotask/modules/home/ui/widgets/primary_cta.dart';
 import 'package:turnotask/widgets/bottom_sheet_mainframe.dart';
+import 'package:turnotask/widgets/kapp_widget.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
   const CreateTaskBottomSheet({super.key});
@@ -29,6 +31,11 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
+        final hasNotificationPermission = state.hasNotificationPermission;
+        final canScheduleReminder =
+            !Platform.isAndroid || hasNotificationPermission;
+
+        final hasReminder = homeCubit.state.selectedDateTime != null;
         return BottomSheetMainFrame(
           label: getSheetTitle(),
           initialChildSize: 0.7,
@@ -42,19 +49,51 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 Gap(16.h),
                 TextField(
                   controller: homeCubit.titleController,
+                  onChanged: homeCubit.updateTaskTitle,
                   decoration: const InputDecoration(labelText: 'Task Title'),
                 ),
                 Gap(12.h),
                 TextField(
                   controller: homeCubit.descriptionController,
+                  onChanged: homeCubit.updateTaskTitle,
                   decoration: const InputDecoration(labelText: 'Description'),
                 ),
                 Gap(12.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Set Reminder',
+                      style: context.textTheme.labelLarge?.withAdaptiveColor(
+                        context,
+                        lightColor: AppColors.colorNeutral900,
+                        darkColor: AppColors.colorNeutralDark900,
+                      ),
+                    ),
+                    if (!canScheduleReminder)...[
+                      Gap(8.w),
+                      IconButton(
+                        icon: const Icon(Icons.info_outline, color: Colors.grey),
+                        onPressed: () {
+                          kAppShowDialog(
+                            context,
+                            whenComplete: () {},
+                            builder: (dialogContext) {
+                              return NotificationPermissionDialogue(
+                                dialogContext: dialogContext,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ]
+                  ],
+                ),
                 Text(
-                  homeCubit.state.selectedDateTime == null
-                      ? 'Set Reminder'
-                      : homeCubit.state.selectedDateTime.toString(),
-                  style: context.textTheme.labelLarge?.withAdaptiveColor(
+                  homeCubit.state.selectedDateTime != null
+                      ? homeCubit.state.selectedDateTime.toString()
+                      : 'No reminder set',
+                  style: context.textTheme.bodySmall?.withAdaptiveColor(
                     context,
                     lightColor: AppColors.colorNeutral900,
                     darkColor: AppColors.colorNeutralDark900,
@@ -75,12 +114,20 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                   ),
                 ],
                 Gap(12.h),
-                PrimaryCta(
-                  onTap: () {
-                    _pickDateTime(context, homeCubit);
-                  },
-                  label: 'Pick Date & Time',
-                ),
+                if (canScheduleReminder) ...[
+                  PrimaryCta(
+                    onTap: () {
+                      _pickDateTime(context, homeCubit);
+                    },
+                    label: 'Pick Date & Time',
+                  ),
+                ] else ...[
+                  PrimaryCta(
+                    isButtonDisable: true,
+                    onTap: () {},
+                    label: 'Pick Date & Time',
+                  ),
+                ],
                 Gap(12.h),
                 Text(
                   'Select Recurrence',
@@ -93,25 +140,28 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 Gap(12.h),
                 DropdownButton<Recurrence>(
                   value: homeCubit.state.selectedRecurrence,
-                  items: Recurrence.values.map((r) {
+                  items: homeCubit.state.selectedDateTime != null
+                      ? Recurrence.values.where((r) => r != Recurrence.none).map((r) {
                     return DropdownMenuItem(
                       value: r,
                       child: Text(r.name.toUpperCase()),
                     );
-                  }).toList(),
-                  onChanged: (value) =>
-                      homeCubit.setSelectedRecurrenceForTask(value!),
+                  }).toList()
+                      : [
+                    DropdownMenuItem(
+                      value: Recurrence.none,
+                      child: const Text('NONE'),
+                    )
+                  ],
+                  onChanged: homeCubit.state.selectedDateTime != null
+                      ? (value) => homeCubit.setSelectedRecurrenceForTask(value!)
+                      : null,
                 ),
                 Gap(12.h),
                 PrimaryCta(
-                  isButtonDisable:
-                      homeCubit.titleController.text.isEmpty ||
+                  isButtonDisable: homeCubit.titleController.text.isEmpty ||
                       homeCubit.descriptionController.text.isEmpty ||
-                      homeCubit.state.selectedDateTime == null ||
-                      (homeCubit.state.selectedDateTime != null &&
-                          homeCubit.state.selectedDateTime!.isBefore(
-                            DateTime.now(),
-                          )),
+                      (homeCubit.state.selectedDateTime != null && homeCubit.state.selectedDateTime!.isBefore(DateTime.now())),
                   onTap: () async {
                     await homeCubit.addTask(context);
                   },

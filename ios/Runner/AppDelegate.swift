@@ -107,7 +107,7 @@ import UserNotifications
 
   /// Define actions for notifications
   private func setupNotificationCategories() {
-    let markDoneAction = UNNotificationAction(identifier: "MARK_DONE", title: "Mark as Done", options: [])
+    let markDoneAction = UNNotificationAction(identifier: "MARK_DONE", title: "Mark as Done", options: [.foreground])
     let category = UNNotificationCategory(identifier: "TASK_CATEGORY", actions: [markDoneAction], intentIdentifiers: [], options: [])
     UNUserNotificationCenter.current().setNotificationCategories([category])
   }
@@ -116,6 +116,7 @@ import UserNotifications
   override func userNotificationCenter(_ center: UNUserNotificationCenter,
                                        didReceive response: UNNotificationResponse,
                                        withCompletionHandler completionHandler: @escaping () -> Void) {
+    print("Notification action received: \(response.actionIdentifier)")
     if response.actionIdentifier == "MARK_DONE" {
       let id = response.notification.request.identifier
       print("Task \(id) marked as done!")

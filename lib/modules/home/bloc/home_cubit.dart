@@ -22,13 +22,28 @@ class HomeCubit extends Cubit<HomeState> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
-  Future<void> checkHasNotificationPermission() async {
+  Future<void> checkHasExactAlarmNotificationPermission() async {
     bool hasPermission = await NotificationHelper.hasExactAlarmPermission();
     emit(state.copyWith(hasNotificationPermission: hasPermission));
   }
 
-  void setSelectedDateTimeForTask(DateTime? selectedDateTime) {
-    emit(state.copyWith(selectedDateTime: selectedDateTime));
+  void updateTaskTitle(String title) {
+    emit(state.copyWith(title: title));
+  }
+
+  void updateTaskDescription(String desc) {
+    emit(state.copyWith(desc: desc));
+  }
+
+  void setSelectedDateTimeForTask(DateTime? dateTime) {
+    emit(state.copyWith(selectedDateTime: dateTime));
+    if (dateTime != null) {
+      if (state.selectedRecurrence == Recurrence.none) {
+        setSelectedRecurrenceForTask(Recurrence.once);
+      }
+    } else {
+      setSelectedRecurrenceForTask(Recurrence.none);
+    }
   }
 
   void setSelectedRecurrenceForTask(Recurrence selectedRecurrence) {
@@ -39,7 +54,7 @@ class HomeCubit extends Cubit<HomeState> {
     titleController.clear();
     descriptionController.clear();
     setSelectedDateTimeForTask(null);
-    setSelectedRecurrenceForTask(Recurrence.once);
+    setSelectedRecurrenceForTask(Recurrence.none);
   }
 
   Future<void> loadAndCacheTask() async {
@@ -52,31 +67,42 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> addTask(BuildContext context) async {
-    if (titleController.text.isEmpty ||
-        descriptionController.text.isEmpty ||
-        state.selectedDateTime == null) {
+    if (titleController.text.isEmpty || descriptionController.text.isEmpty) {
       return;
     }
+
+    final hasReminder = Platform.isAndroid
+        ? state.hasNotificationPermission && state.selectedDateTime != null
+        : state.selectedDateTime != null;
+
     final newTask = Task(
       id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title: titleController.text,
       description: descriptionController.text,
-      dateTime: state.selectedDateTime!,
-      recurrence: state.selectedRecurrence,
+      dateTime: hasReminder ? state.selectedDateTime : null,
+      recurrence: hasReminder ? state.selectedRecurrence : Recurrence.none,
     );
-    if (Platform.isAndroid) {
-      await NotificationHelper.scheduleNotification(task: newTask);
-    } else {
-      await NotificationHelper.scheduleNotificationIos(task: newTask);
+
+    if (hasReminder) {
+      if (Platform.isAndroid) {
+        await NotificationHelper.scheduleNotification(task: newTask);
+      } else {
+        await NotificationHelper.scheduleNotificationIos(task: newTask);
+      }
     }
+
     await TaskCacheManager.saveTask(newTask);
     HapticFeedback.mediumImpact();
     await loadAndCacheTask();
+
     clearAllFields();
+
     if (context.mounted) {
       Navigator.pop(context);
     }
   }
+
+
 
   Future<void> deleteTask(int index) async {
     await TaskCacheManager.deleteTaskAt(index);

@@ -70,10 +70,11 @@ class TaskCacheManager {
     final now = DateTime.now();
 
     for (var task in tasks) {
-      if (!task.isCompleted && task.dateTime.isAfter(now)) {
+      final reminderDate = task.dateTime;
+
+      if (reminderDate != null && !task.isCompleted && reminderDate.isAfter(now)) {
         await NotificationHelper.scheduleNotification(task: task);
       }
-      // else skip tasks in the past
     }
   }
 }

@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: context.isLightTheme
           ? AppColors.bgColor
-          : AppColors.bgColorDark,
+          : AppColors.backgroundDark,
       body: Center(
         child: Text(
           'TURNO TASK',
