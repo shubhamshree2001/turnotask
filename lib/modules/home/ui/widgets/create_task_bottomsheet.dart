@@ -151,7 +151,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 ],
                 Text(
                   homeCubit.state.selectedDateTime != null
-                      ? homeCubit.state.selectedDateTime.toString()
+                      ? homeCubit.formatDateTime(homeCubit.state.selectedDateTime.toString())
                       : 'No reminder set',
                   style: context.textTheme.bodySmall?.withAdaptiveColor(
                     context,
