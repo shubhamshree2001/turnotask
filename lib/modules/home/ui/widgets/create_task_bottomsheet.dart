@@ -233,9 +233,10 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                   onTap: () async {
                     await homeCubit.addTask(context);
                     if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customSnackBar(context, "Task added successfully!"),
-                    );
+                    showCenterSnackBar(context, "Task added successfully!");
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   customSnackBar(context, "Task added successfully!"),
+                    // );
                   },
                   label: 'Add Task',
                 ),

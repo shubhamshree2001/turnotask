@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
+import 'package:turnotask/data/utils/string_extension.dart';
+import 'package:turnotask/data/values/app_images.dart';
 
 Future kAppShowModalBottomSheet(
   BuildContext context,
@@ -59,34 +62,53 @@ Future<T?> kAppShowDialog<T>(
   ).whenComplete(() => whenComplete?.call());
 }
 
-SnackBar customSnackBar(BuildContext context, String message) {
-  return SnackBar(
-    content: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: AppColors.primaryColor, width: 2.w),
-      ),
-      padding: EdgeInsets.all(16.w),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              message,
-              style: context.textTheme.displaySmall?.withAdaptiveColor(
-                context,
-                lightColor: AppColors.colorNeutral900,
-                darkColor: AppColors.colorNeutral900,
+void showCenterSnackBar(BuildContext context, String message) {
+  final overlay = Overlay.of(context);
+  final overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: MediaQuery.of(context).size.height * 0.45,
+      left: 20.w,
+      right: 20.w,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, 2),
               ),
-            ),
+            ],
           ),
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AppImages.doneIcon.toSvg(height: 64.w, width: 64.w),
+              Gap(4.h),
+              Text(
+                message,
+                style: context.textTheme.displayLarge?.withAdaptiveColor(
+                  context,
+                  lightColor: AppColors.colorNeutral900,
+                  darkColor: AppColors.colorNeutral900,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     ),
-    backgroundColor: Colors.transparent,
-    behavior: SnackBarBehavior.floating,
-    duration: const Duration(seconds: 2),
-    margin: EdgeInsets.only(left: 6.w, right: 10.w, bottom: 1.sh - 175.w),
-    elevation: 0,
   );
+
+  overlay.insert(overlayEntry);
+
+  Future.delayed(const Duration(seconds: 3), () {
+    overlayEntry.remove();
+  });
 }

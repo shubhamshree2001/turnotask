@@ -189,7 +189,7 @@ class _TaskListViewState extends State<TaskListView>
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
@@ -251,9 +251,7 @@ class _TaskListViewState extends State<TaskListView>
                   onPressed: () async {
                     await homeCubit.deleteTask(index);
                     if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      customSnackBar(context, "Task deleted successfully!"),
-                    );
+                    showCenterSnackBar(context, "Task deleted successfully!");
                   },
                 ),
               ],
@@ -297,9 +295,11 @@ class _TaskListViewState extends State<TaskListView>
                   PrimaryCta(
                     onTap: () {
                       homeCubit.markAsCompleted(task, index);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        customSnackBar(context, "Task completed successfully!"),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   customSnackBar(context, "Task completed successfully!"),
+                      // );
+                      showCenterSnackBar(context, "Task completed successfully!");
+
                     },
                     label: "Mark Done",
                     color: Colors.orange.withOpacity(0.8),
