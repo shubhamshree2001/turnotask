@@ -162,6 +162,10 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                       (homeCubit.state.selectedDateTime != null && homeCubit.state.selectedDateTime!.isBefore(DateTime.now())),
                   onTap: () async {
                     await homeCubit.addTask(context);
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      customSnackBar(context, "Task added successfully!"),
+                    );
                   },
                   label: 'Add Task',
                 ),

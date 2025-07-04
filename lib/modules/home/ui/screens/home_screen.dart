@@ -224,6 +224,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   tooltip: 'Delete',
                   onPressed: () async {
                     await homeCubit.deleteTask(index);
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        customSnackBar(context, "Task deleted successfully!"));
                   },
                 ),
               ],
@@ -257,6 +260,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   PrimaryCta(
                     onTap: () {
                       homeCubit.markAsCompleted(task, index);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          customSnackBar(context, "Task completed successfully!"));
                     },
                     label: "Mark Done",
                     color: Colors.orange.withOpacity(0.8),

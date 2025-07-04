@@ -61,81 +61,36 @@ Future<T?> kAppShowDialog<T>(
   ).whenComplete(() => whenComplete?.call());
 }
 
-void kAppShowGlassmorphicSnackbar(BuildContext context, String message) {
-  final overlay = Overlay.of(context);
-  final overlayEntry = OverlayEntry(
-    builder: (context) => Positioned(
-      bottom: 40,
-      left: 20,
-      right: 20,
-      child: Material(
-        color: AppColors.transparent,
-        child: Directionality(
-          textDirection: TextDirection.ltr,
-          child: GlassmorphicSnackbar(message: message),
-        ),
+SnackBar customSnackBar(BuildContext context, String message) {
+  return SnackBar(
+    content: Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.primaryColor, width: 2.w),
+      ),
+      padding: EdgeInsets.all(16.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              message,
+              style: context.textTheme.displaySmall?.withAdaptiveColor(
+                context,
+                lightColor: AppColors.colorNeutral900,
+                darkColor: AppColors.colorNeutral900,
+              ),
+            ),
+          ),
+        ],
       ),
     ),
+    backgroundColor: Colors.transparent,
+    behavior: SnackBarBehavior.floating,
+    duration: const Duration(seconds: 2),
+    margin: EdgeInsets.only(left: 6.w, right: 10.w, bottom: 1.sh - 175.w),
+    elevation: 0,
   );
-
-  overlay.insert(overlayEntry);
-
-  Future.delayed(const Duration(seconds: 3), () {
-    overlayEntry.remove();
-  });
 }
 
-class GlassmorphicSnackbar extends StatelessWidget {
-  final String message;
-  final bool errorIcon;
 
-  const GlassmorphicSnackbar({
-    super.key,
-    required this.message,
-    this.errorIcon = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8.r),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.w),
-          decoration: BoxDecoration(
-            color: AppColors.colorNeutralDark400.withAlpha(
-              (255.0 * 0.15).round(),
-            ),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: AppColors.colorNeutral200.withAlpha((255.0 * 0.2).round()),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                errorIcon ? Icons.error_outline : Icons.info_outline,
-                color: context.isDarkTheme
-                    ? AppColors.colorNeutral50
-                    : AppColors.colorNeutral900,
-              ),
-              Gap(12.w),
-              Expanded(
-                child: Text(
-                  message,
-                  style: context.textTheme.bodySmall?.withAdaptiveColor(
-                    context,
-                    lightColor: AppColors.colorNeutral900,
-                    darkColor: AppColors.colorNeutral50,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
