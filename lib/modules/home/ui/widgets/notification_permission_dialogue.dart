@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:turnotask/services/notification_helper.dart';
 import 'package:turnotask/widgets/turno_dialogue.dart';
@@ -15,8 +17,13 @@ class NotificationPermissionDialogue extends StatelessWidget {
       content:
       'It looks like you have turned off permissions required for this feature. It can be enabled under Phone Settings > Apps > Turno Task > Alarms and Reminders',
       onButtonTap: () {
-        NotificationHelper.checkAndRequestExactAlarmPermission();
-        Navigator.pop(context);
+        if(Platform.isAndroid) {
+          NotificationHelper.checkAndRequestExactAlarmPermission();
+          Navigator.pop(context);
+        }else{
+          NotificationHelper.openAppSettings();
+          Navigator.pop(context);
+        }
       },
       buttonLabel: 'Settings',
     );

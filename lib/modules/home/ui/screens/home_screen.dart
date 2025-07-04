@@ -54,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       final HomeCubit homeCubit = context.read<HomeCubit>();
       if (Platform.isAndroid) {
         await homeCubit.checkHasExactAlarmNotificationPermission();
+      }else {
+        await homeCubit.checkHasNotificationPermissionIos();
       }
     });
     // NotificationService().registerMarkDoneCallback((taskId) {
@@ -67,9 +69,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void updateNotificationPermission() {
+    final HomeCubit homeCubit = context.read<HomeCubit>();
     if (Platform.isAndroid) {
-      final HomeCubit homeCubit = context.read<HomeCubit>();
       homeCubit.checkHasExactAlarmNotificationPermission();
+    }else{
+      homeCubit.checkHasNotificationPermissionIos();
     }
   }
 

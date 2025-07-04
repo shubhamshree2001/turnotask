@@ -15,6 +15,7 @@ class NotificationHelper {
   static Future<void> requestNotificationPermissionAtStartup() async {
     final hasPermission = await hasNotificationPermission();
     if (!hasPermission) {
+      print("no permission");
       await requestNotificationPermission();
     }
   }
@@ -64,5 +65,13 @@ class NotificationHelper {
 
   static Future<void> cancelScheduledNotificationIos(String id) async {
     await _channel.invokeMethod('cancelNotification', id);
+  }
+
+  static Future<void> openAppSettings() async {
+    try {
+      await _channel.invokeMethod('openAppSettings');
+    } catch (e) {
+      print('Failed to open settings: $e');
+    }
   }
 }

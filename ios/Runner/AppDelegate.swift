@@ -48,6 +48,17 @@ import UserNotifications
             }
           }
         }
+      case "openAppSettings":
+          if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+              if UIApplication.shared.canOpenURL(appSettings) {
+                  UIApplication.shared.open(appSettings, options: [:], completionHandler: nil)
+                  result(true)
+              } else {
+                  result(false)
+              }
+          } else {
+               result(false)
+          }
 
       case "hasNotificationPermission":
         UNUserNotificationCenter.current().getNotificationSettings { settings in

@@ -7,7 +7,8 @@ class HomeState extends Equatable {
   final DateTime? selectedDateTime;
   final Recurrence selectedRecurrence;
   final List<Task> allTask;
-  final bool hasNotificationPermission;
+  final bool hasExactAlarmNotificationPermission;
+  final bool hasNotificationPermissionIos;
   final String? title;
   final String? desc;
 
@@ -17,7 +18,8 @@ class HomeState extends Equatable {
     this.selectedDateTime,
     this.selectedRecurrence = Recurrence.none,
     this.allTask = const [],
-    this.hasNotificationPermission = false,
+    this.hasExactAlarmNotificationPermission = false,
+    this.hasNotificationPermissionIos = false,
     this.title,
     this.desc,
   });
@@ -29,7 +31,8 @@ class HomeState extends Equatable {
     selectedDateTime,
     selectedRecurrence,
     allTask,
-    hasNotificationPermission,
+    hasExactAlarmNotificationPermission,
+    hasNotificationPermissionIos,
     title,
     desc
   ];

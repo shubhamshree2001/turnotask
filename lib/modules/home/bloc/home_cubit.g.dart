@@ -17,7 +17,11 @@ abstract class _$HomeStateCWProxy {
 
   HomeState allTask(List<Task> allTask);
 
-  HomeState hasNotificationPermission(bool hasNotificationPermission);
+  HomeState hasExactAlarmNotificationPermission(
+    bool hasExactAlarmNotificationPermission,
+  );
+
+  HomeState hasNotificationPermissionIos(bool hasNotificationPermissionIos);
 
   HomeState title(String? title);
 
@@ -35,7 +39,8 @@ abstract class _$HomeStateCWProxy {
     DateTime? selectedDateTime,
     Recurrence selectedRecurrence,
     List<Task> allTask,
-    bool hasNotificationPermission,
+    bool hasExactAlarmNotificationPermission,
+    bool hasNotificationPermissionIos,
     String? title,
     String? desc,
   });
@@ -65,8 +70,15 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
   HomeState allTask(List<Task> allTask) => this(allTask: allTask);
 
   @override
-  HomeState hasNotificationPermission(bool hasNotificationPermission) =>
-      this(hasNotificationPermission: hasNotificationPermission);
+  HomeState hasExactAlarmNotificationPermission(
+    bool hasExactAlarmNotificationPermission,
+  ) => this(
+    hasExactAlarmNotificationPermission: hasExactAlarmNotificationPermission,
+  );
+
+  @override
+  HomeState hasNotificationPermissionIos(bool hasNotificationPermissionIos) =>
+      this(hasNotificationPermissionIos: hasNotificationPermissionIos);
 
   @override
   HomeState title(String? title) => this(title: title);
@@ -87,7 +99,8 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
     Object? selectedDateTime = const $CopyWithPlaceholder(),
     Object? selectedRecurrence = const $CopyWithPlaceholder(),
     Object? allTask = const $CopyWithPlaceholder(),
-    Object? hasNotificationPermission = const $CopyWithPlaceholder(),
+    Object? hasExactAlarmNotificationPermission = const $CopyWithPlaceholder(),
+    Object? hasNotificationPermissionIos = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
     Object? desc = const $CopyWithPlaceholder(),
   }) {
@@ -112,11 +125,16 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
           ? _value.allTask
           // ignore: cast_nullable_to_non_nullable
           : allTask as List<Task>,
-      hasNotificationPermission:
-          hasNotificationPermission == const $CopyWithPlaceholder()
-          ? _value.hasNotificationPermission
+      hasExactAlarmNotificationPermission:
+          hasExactAlarmNotificationPermission == const $CopyWithPlaceholder()
+          ? _value.hasExactAlarmNotificationPermission
           // ignore: cast_nullable_to_non_nullable
-          : hasNotificationPermission as bool,
+          : hasExactAlarmNotificationPermission as bool,
+      hasNotificationPermissionIos:
+          hasNotificationPermissionIos == const $CopyWithPlaceholder()
+          ? _value.hasNotificationPermissionIos
+          // ignore: cast_nullable_to_non_nullable
+          : hasNotificationPermissionIos as bool,
       title: title == const $CopyWithPlaceholder()
           ? _value.title
           // ignore: cast_nullable_to_non_nullable

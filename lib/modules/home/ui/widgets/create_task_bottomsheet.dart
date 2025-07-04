@@ -31,9 +31,8 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final hasNotificationPermission = state.hasNotificationPermission;
-        final canScheduleReminder =
-            !Platform.isAndroid || hasNotificationPermission;
+        final hasNotificationPermission = Platform.isAndroid ? state.hasExactAlarmNotificationPermission : state.hasNotificationPermissionIos;
+        final canScheduleReminder = hasNotificationPermission;
         return BottomSheetMainFrame(
           label: getSheetTitle(),
           initialChildSize: 0.7,
@@ -71,7 +70,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                     if (!canScheduleReminder)...[
                       Gap(8.w),
                       IconButton(
-                        icon: const Icon(Icons.info_outline, color: Colors.grey),
+                        icon: const Icon(Icons.info_outline, color: AppColors.primaryColor),
                         onPressed: () {
                           kAppShowDialog(
                             context,
