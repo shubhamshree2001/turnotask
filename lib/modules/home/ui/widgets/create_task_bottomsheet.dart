@@ -34,8 +34,6 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
         final hasNotificationPermission = state.hasNotificationPermission;
         final canScheduleReminder =
             !Platform.isAndroid || hasNotificationPermission;
-
-        final hasReminder = homeCubit.state.selectedDateTime != null;
         return BottomSheetMainFrame(
           label: getSheetTitle(),
           initialChildSize: 0.7,

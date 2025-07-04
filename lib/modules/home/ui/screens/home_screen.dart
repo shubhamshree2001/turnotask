@@ -90,29 +90,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              // if (Platform.isAndroid) {
-              //   if (homeCubit.state.hasNotificationPermission) {
-              //     kAppShowModalBottomSheet(
-              //       context,
-              //       const CreateTaskBottomSheet(),
-              //     );
-              //   } else {
-              //     kAppShowDialog(
-              //       context,
-              //       whenComplete: () {},
-              //       builder: (dialogContext) {
-              //         return NotificationPermissionDialogue(
-              //           dialogContext: dialogContext,
-              //         );
-              //       },
-              //     );
-              //   }
-              // } else {
-              //   kAppShowModalBottomSheet(
-              //     context,
-              //     const CreateTaskBottomSheet(),
-              //   );
-              // }
               kAppShowModalBottomSheet(context, const CreateTaskBottomSheet());
             },
             tooltip: 'Add Task',
