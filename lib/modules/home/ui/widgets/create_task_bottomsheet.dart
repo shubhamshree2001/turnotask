@@ -31,11 +31,12 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final hasNotificationPermission = Platform.isAndroid
-            ? state.hasNotificationPermissionAndroid &&
-                  state.hasExactAlarmNotificationPermission
-            : state.hasNotificationPermissionIos;
-        final canScheduleReminder = hasNotificationPermission;
+        final hasNotificationPermissionAndroid = state.hasNotificationPermissionAndroid;
+        final hasExactAlarmPermissionAndroid = state.hasExactAlarmNotificationPermission;
+        final hasNotificationPermissionIos = state.hasNotificationPermissionIos;
+        final canScheduleReminder = Platform.isAndroid
+            ? hasNotificationPermissionAndroid && hasExactAlarmPermissionAndroid
+            : hasNotificationPermissionIos;
         return BottomSheetMainFrame(
           label: getSheetTitle(),
           initialChildSize: 0.7,
@@ -70,7 +71,26 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                         darkColor: AppColors.colorNeutralDark900,
                       ),
                     ),
-                    if (!canScheduleReminder) ...[
+                    if (Platform.isAndroid && !hasNotificationPermissionAndroid) ...[
+                      Gap(8.w),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.info_outline,
+                          color: AppColors.primaryColor,
+                        ),
+                        onPressed: () {
+                          kAppShowDialog(
+                            context,
+                            whenComplete: () {},
+                            builder: (dialogContext) {
+                              return NotificationPermissionDialogue(
+                                dialogContext: dialogContext,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ] else if (Platform.isIOS && !hasNotificationPermissionIos) ...[
                       Gap(8.w),
                       IconButton(
                         icon: const Icon(
@@ -92,6 +112,43 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                     ],
                   ],
                 ),
+                if (Platform.isAndroid &&
+                    hasNotificationPermissionAndroid &&
+                    !hasExactAlarmPermissionAndroid) ...[
+                  Gap(8.h),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Exact alarm permission is required to schedule precise reminders.',
+                          style: context.textTheme.bodySmall?.withAdaptiveColor(
+                            context,
+                            lightColor: AppColors.colorNeutral900,
+                            darkColor: AppColors.colorNeutralDark900,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.info_outline,
+                          color: AppColors.primaryColor,
+                        ),
+                        onPressed: () {
+                          kAppShowDialog(
+                            context,
+                            whenComplete: () {},
+                            builder: (dialogContext) {
+                              return NotificationPermissionDialogue(
+                                dialogContext: dialogContext,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
                 Text(
                   homeCubit.state.selectedDateTime != null
                       ? homeCubit.state.selectedDateTime.toString()
