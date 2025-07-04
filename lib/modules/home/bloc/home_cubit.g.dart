@@ -23,6 +23,10 @@ abstract class _$HomeStateCWProxy {
 
   HomeState hasNotificationPermissionIos(bool hasNotificationPermissionIos);
 
+  HomeState hasNotificationPermissionAndroid(
+    bool hasNotificationPermissionAndroid,
+  );
+
   HomeState title(String? title);
 
   HomeState desc(String? desc);
@@ -41,6 +45,7 @@ abstract class _$HomeStateCWProxy {
     List<Task> allTask,
     bool hasExactAlarmNotificationPermission,
     bool hasNotificationPermissionIos,
+    bool hasNotificationPermissionAndroid,
     String? title,
     String? desc,
   });
@@ -81,6 +86,11 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
       this(hasNotificationPermissionIos: hasNotificationPermissionIos);
 
   @override
+  HomeState hasNotificationPermissionAndroid(
+    bool hasNotificationPermissionAndroid,
+  ) => this(hasNotificationPermissionAndroid: hasNotificationPermissionAndroid);
+
+  @override
   HomeState title(String? title) => this(title: title);
 
   @override
@@ -101,6 +111,7 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
     Object? allTask = const $CopyWithPlaceholder(),
     Object? hasExactAlarmNotificationPermission = const $CopyWithPlaceholder(),
     Object? hasNotificationPermissionIos = const $CopyWithPlaceholder(),
+    Object? hasNotificationPermissionAndroid = const $CopyWithPlaceholder(),
     Object? title = const $CopyWithPlaceholder(),
     Object? desc = const $CopyWithPlaceholder(),
   }) {
@@ -135,6 +146,11 @@ class _$HomeStateCWProxyImpl implements _$HomeStateCWProxy {
           ? _value.hasNotificationPermissionIos
           // ignore: cast_nullable_to_non_nullable
           : hasNotificationPermissionIos as bool,
+      hasNotificationPermissionAndroid:
+          hasNotificationPermissionAndroid == const $CopyWithPlaceholder()
+          ? _value.hasNotificationPermissionAndroid
+          // ignore: cast_nullable_to_non_nullable
+          : hasNotificationPermissionAndroid as bool,
       title: title == const $CopyWithPlaceholder()
           ? _value.title
           // ignore: cast_nullable_to_non_nullable

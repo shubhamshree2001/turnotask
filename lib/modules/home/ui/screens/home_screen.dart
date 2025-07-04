@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final HomeCubit homeCubit = context.read<HomeCubit>();
       if (Platform.isAndroid) {
+        await homeCubit.checkHasNotificationPermissionAndroid();
         await homeCubit.checkHasExactAlarmNotificationPermission();
       }else {
         await homeCubit.checkHasNotificationPermissionIos();
@@ -71,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void updateNotificationPermission() {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     if (Platform.isAndroid) {
+      homeCubit.checkHasNotificationPermissionAndroid();
       homeCubit.checkHasExactAlarmNotificationPermission();
     }else{
       homeCubit.checkHasNotificationPermissionIos();
@@ -88,9 +90,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final HomeCubit homeCubit = context.read<HomeCubit>();
         return Scaffold(
           floatingActionButton: FloatingActionButton(
             onPressed: () async {

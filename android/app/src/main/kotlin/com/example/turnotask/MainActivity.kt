@@ -51,6 +51,10 @@ class MainActivity : FlutterActivity() {
                     requestNotificationPermission()
                     result.success(null)
                 }
+                "openAppNotificationSettings" -> {
+                    openAppNotificationSettings()
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }
         }
@@ -171,5 +175,13 @@ class MainActivity : FlutterActivity() {
                 NOTIFICATION_PERMISSION_REQUEST_CODE
             )
         }
+    }
+
+    //Open system settings for notification permission
+    private fun openAppNotificationSettings() {
+        val intent = Intent()
+        intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        startActivity(intent)
     }
 }

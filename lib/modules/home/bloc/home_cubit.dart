@@ -22,6 +22,11 @@ class HomeCubit extends Cubit<HomeState> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+  Future<void> checkHasNotificationPermissionAndroid() async {
+    bool hasPermission = await NotificationHelper.hasNotificationPermission();
+    emit(state.copyWith(hasNotificationPermissionAndroid: hasPermission));
+  }
+
   Future<void> checkHasNotificationPermissionIos() async {
     bool hasPermission = await NotificationHelper.hasNotificationPermission();
     emit(state.copyWith(hasNotificationPermissionIos: hasPermission));
@@ -77,7 +82,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     final hasReminder = Platform.isAndroid
-        ? state.hasExactAlarmNotificationPermission && state.selectedDateTime != null
+        ? state.hasExactAlarmNotificationPermission && state.hasNotificationPermissionAndroid && state.selectedDateTime != null
         : state.hasNotificationPermissionIos && state.selectedDateTime != null;
 
     final newTask = Task(

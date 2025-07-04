@@ -31,7 +31,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final hasNotificationPermission = Platform.isAndroid ? state.hasExactAlarmNotificationPermission : state.hasNotificationPermissionIos;
+        final hasNotificationPermission = Platform.isAndroid ? state.hasNotificationPermissionAndroid && state.hasExactAlarmNotificationPermission : state.hasNotificationPermissionIos;
         final canScheduleReminder = hasNotificationPermission;
         return BottomSheetMainFrame(
           label: getSheetTitle(),

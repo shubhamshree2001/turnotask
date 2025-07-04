@@ -9,6 +9,7 @@ class HomeState extends Equatable {
   final List<Task> allTask;
   final bool hasExactAlarmNotificationPermission;
   final bool hasNotificationPermissionIos;
+  final bool hasNotificationPermissionAndroid;
   final String? title;
   final String? desc;
 
@@ -20,6 +21,7 @@ class HomeState extends Equatable {
     this.allTask = const [],
     this.hasExactAlarmNotificationPermission = false,
     this.hasNotificationPermissionIos = false,
+    this.hasNotificationPermissionAndroid = false,
     this.title,
     this.desc,
   });
@@ -33,6 +35,7 @@ class HomeState extends Equatable {
     allTask,
     hasExactAlarmNotificationPermission,
     hasNotificationPermissionIos,
+    hasNotificationPermissionAndroid,
     title,
     desc
   ];

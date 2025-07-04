@@ -74,4 +74,8 @@ class NotificationHelper {
       print('Failed to open settings: $e');
     }
   }
+
+  static Future<void> openAppNotificationSettings() async {
+    await _channel.invokeMethod('openAppNotificationSettings');
+  }
 }
