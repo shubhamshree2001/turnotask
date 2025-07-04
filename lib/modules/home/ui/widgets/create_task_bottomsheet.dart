@@ -31,7 +31,10 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final hasNotificationPermission = Platform.isAndroid ? state.hasNotificationPermissionAndroid && state.hasExactAlarmNotificationPermission : state.hasNotificationPermissionIos;
+        final hasNotificationPermission = Platform.isAndroid
+            ? state.hasNotificationPermissionAndroid &&
+                  state.hasExactAlarmNotificationPermission
+            : state.hasNotificationPermissionIos;
         final canScheduleReminder = hasNotificationPermission;
         return BottomSheetMainFrame(
           label: getSheetTitle(),
@@ -67,10 +70,13 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                         darkColor: AppColors.colorNeutralDark900,
                       ),
                     ),
-                    if (!canScheduleReminder)...[
+                    if (!canScheduleReminder) ...[
                       Gap(8.w),
                       IconButton(
-                        icon: const Icon(Icons.info_outline, color: AppColors.primaryColor),
+                        icon: const Icon(
+                          Icons.info_outline,
+                          color: AppColors.primaryColor,
+                        ),
                         onPressed: () {
                           kAppShowDialog(
                             context,
@@ -83,7 +89,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                           );
                         },
                       ),
-                    ]
+                    ],
                   ],
                 ),
                 Text(
@@ -138,27 +144,35 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 DropdownButton<Recurrence>(
                   value: homeCubit.state.selectedRecurrence,
                   items: homeCubit.state.selectedDateTime != null
-                      ? Recurrence.values.where((r) => r != Recurrence.none).map((r) {
-                    return DropdownMenuItem(
-                      value: r,
-                      child: Text(r.name.toUpperCase()),
-                    );
-                  }).toList()
+                      ? Recurrence.values
+                            .where((r) => r != Recurrence.none)
+                            .map((r) {
+                              return DropdownMenuItem(
+                                value: r,
+                                child: Text(r.name.toUpperCase()),
+                              );
+                            })
+                            .toList()
                       : [
-                    DropdownMenuItem(
-                      value: Recurrence.none,
-                      child: const Text('NONE'),
-                    )
-                  ],
+                          DropdownMenuItem(
+                            value: Recurrence.none,
+                            child: const Text('NONE'),
+                          ),
+                        ],
                   onChanged: homeCubit.state.selectedDateTime != null
-                      ? (value) => homeCubit.setSelectedRecurrenceForTask(value!)
+                      ? (value) =>
+                            homeCubit.setSelectedRecurrenceForTask(value!)
                       : null,
                 ),
                 Gap(12.h),
                 PrimaryCta(
-                  isButtonDisable: homeCubit.titleController.text.isEmpty ||
+                  isButtonDisable:
+                      homeCubit.titleController.text.isEmpty ||
                       homeCubit.descriptionController.text.isEmpty ||
-                      (homeCubit.state.selectedDateTime != null && homeCubit.state.selectedDateTime!.isBefore(DateTime.now())),
+                      (homeCubit.state.selectedDateTime != null &&
+                          homeCubit.state.selectedDateTime!.isBefore(
+                            DateTime.now(),
+                          )),
                   onTap: () async {
                     await homeCubit.addTask(context);
                     if (!mounted) return;

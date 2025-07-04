@@ -37,6 +37,6 @@ class HomeState extends Equatable {
     hasNotificationPermissionIos,
     hasNotificationPermissionAndroid,
     title,
-    desc
+    desc,
   ];
 }

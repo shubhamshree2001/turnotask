@@ -72,7 +72,9 @@ class TaskCacheManager {
     for (var task in tasks) {
       final reminderDate = task.dateTime;
 
-      if (reminderDate != null && !task.isCompleted && reminderDate.isAfter(now)) {
+      if (reminderDate != null &&
+          !task.isCompleted &&
+          reminderDate.isAfter(now)) {
         await NotificationHelper.scheduleNotification(task: task);
       }
     }

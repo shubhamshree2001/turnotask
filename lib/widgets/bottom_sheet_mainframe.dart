@@ -90,9 +90,6 @@ class BottomSheetMainFrame extends StatelessWidget {
                   child: content?.call(scrollController) ?? const SizedBox(),
                 ),
               ),
-              // if (onCtaClick != null) Gap(18.w),
-              // if (onCtaClick != null)
-              //   PrimaryCta(label: ctaLabel.toString(), onTap: onCtaClick!),
             ],
           ),
         );

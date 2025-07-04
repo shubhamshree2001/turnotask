@@ -16,6 +16,7 @@ Future<void> setup() async {
   getIt.registerLazySingleton(() => AppStorage());
   getIt.registerLazySingleton(() => PrefServices());
 }
+
 Future<void> _initSharedPref() async {
   SharedPreferences sharedPref = await SharedPreferences.getInstance();
   getIt.registerSingleton<SharedPreferences>(sharedPref);

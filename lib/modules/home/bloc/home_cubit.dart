@@ -13,7 +13,6 @@ import 'package:turnotask/services/get_it_service.dart';
 import 'package:turnotask/services/notification_helper.dart';
 
 part 'home_cubit.g.dart';
-
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -82,7 +81,9 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     final hasReminder = Platform.isAndroid
-        ? state.hasExactAlarmNotificationPermission && state.hasNotificationPermissionAndroid && state.selectedDateTime != null
+        ? state.hasExactAlarmNotificationPermission &&
+              state.hasNotificationPermissionAndroid &&
+              state.selectedDateTime != null
         : state.hasNotificationPermissionIos && state.selectedDateTime != null;
 
     final newTask = Task(
@@ -111,8 +112,6 @@ class HomeCubit extends Cubit<HomeState> {
       Navigator.pop(context);
     }
   }
-
-
 
   Future<void> deleteTask(int index) async {
     await TaskCacheManager.deleteTaskAt(index);

@@ -11,10 +11,8 @@ import 'package:turnotask/data/values/app_images.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/modules/home/ui/widgets/create_task_bottomsheet.dart';
-import 'package:turnotask/modules/home/ui/widgets/notification_permission_dialogue.dart';
 import 'package:turnotask/modules/home/ui/widgets/primary_cta.dart';
 import 'package:turnotask/modules/home/ui/widgets/set_app_theme_bottomsheet.dart';
-import 'package:turnotask/services/notification_helper.dart';
 import 'package:turnotask/widgets/kapp_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -55,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if (Platform.isAndroid) {
         await homeCubit.checkHasNotificationPermissionAndroid();
         await homeCubit.checkHasExactAlarmNotificationPermission();
-      }else {
+      } else {
         await homeCubit.checkHasNotificationPermissionIos();
       }
     });
@@ -74,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (Platform.isAndroid) {
       homeCubit.checkHasNotificationPermissionAndroid();
       homeCubit.checkHasExactAlarmNotificationPermission();
-    }else{
+    } else {
       homeCubit.checkHasNotificationPermissionIos();
     }
   }
@@ -232,7 +230,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     await homeCubit.deleteTask(index);
                     if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                        customSnackBar(context, "Task deleted successfully!"));
+                      customSnackBar(context, "Task deleted successfully!"),
+                    );
                   },
                 ),
               ],
@@ -267,7 +266,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     onTap: () {
                       homeCubit.markAsCompleted(task, index);
                       ScaffoldMessenger.of(context).showSnackBar(
-                          customSnackBar(context, "Task completed successfully!"));
+                        customSnackBar(context, "Task completed successfully!"),
+                      );
                     },
                     label: "Mark Done",
                     color: Colors.orange.withOpacity(0.8),

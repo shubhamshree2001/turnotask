@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
 import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 
@@ -43,13 +41,13 @@ Future kAppShowModalBottomSheet(
 }
 
 Future<T?> kAppShowDialog<T>(
-    BuildContext context, {
-      required WidgetBuilder builder,
-      bool barrierDismissible = true,
-      Color? barrierColor,
-      String? barrierLabel,
-      VoidCallback? whenComplete,
-    }) {
+  BuildContext context, {
+  required WidgetBuilder builder,
+  bool barrierDismissible = true,
+  Color? barrierColor,
+  String? barrierLabel,
+  VoidCallback? whenComplete,
+}) {
   return showDialog<T>(
     context: context,
     barrierDismissible: barrierDismissible,
@@ -92,5 +90,3 @@ SnackBar customSnackBar(BuildContext context, String message) {
     elevation: 0,
   );
 }
-
-

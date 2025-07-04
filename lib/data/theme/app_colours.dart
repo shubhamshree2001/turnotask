@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const Color primaryColor = Color(0xff80D112);
 
-
   static const bgColor = Color(0xffffffff);
   static const colorNeutral50 = Color(0XFFFFFFFF);
   static const colorNeutral100 = Color(0XFFF7F7F7);
@@ -15,7 +14,6 @@ class AppColors {
   static const colorNeutral700 = Color(0Xff565A61);
   static const colorNeutral800 = Color(0XFF31353B);
   static const colorNeutral900 = Color(0xff171B21);
-
 
   static const Color backgroundDark = Color(0xff303030);
   static const colorNeutralDark50 = Color(0XFF05080F);

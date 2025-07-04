@@ -1,9 +1,6 @@
-
 import 'package:turnotask/services/get_it_service.dart';
 
-enum PrefKeys {
-  notificationTaskID,
-}
+enum PrefKeys { notificationTaskID }
 
 class PrefServices {
   void clear() {
@@ -17,5 +14,4 @@ class PrefServices {
   int getNotificationTaskId() {
     return gSPrefs.getInt(PrefKeys.notificationTaskID.name) ?? -1;
   }
-
 }

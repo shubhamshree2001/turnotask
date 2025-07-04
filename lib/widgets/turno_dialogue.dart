@@ -33,9 +33,7 @@ class AtDialog extends StatelessWidget {
       backgroundColor: context.theme.scaffoldBackgroundColor,
       elevation: 8,
       insetPadding: EdgeInsets.all(20.w),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
       child: Container(
         padding: EdgeInsets.all(24.w),
         child: Column(
@@ -46,16 +44,20 @@ class AtDialog extends StatelessWidget {
             if (imagePath != null) Gap(32.w),
             Text(
               title,
-              style: context.textTheme.displayLarge?.withAdaptiveColor(context,
-                  lightColor: AppColors.colorNeutral900,
-                  darkColor: AppColors.colorNeutralDark900),
+              style: context.textTheme.displayLarge?.withAdaptiveColor(
+                context,
+                lightColor: AppColors.colorNeutral900,
+                darkColor: AppColors.colorNeutralDark900,
+              ),
             ),
             Gap(8.w),
             Text(
               content,
-              style: context.textTheme.bodySmall?.withAdaptiveColor(context,
-                  lightColor: AppColors.colorNeutral800,
-                  darkColor: AppColors.colorNeutralDark800),
+              style: context.textTheme.bodySmall?.withAdaptiveColor(
+                context,
+                lightColor: AppColors.colorNeutral800,
+                darkColor: AppColors.colorNeutralDark800,
+              ),
             ),
             Gap(20.w),
             Row(
@@ -79,7 +81,7 @@ class AtDialog extends StatelessWidget {
                     ),
                   ),
               ],
-            )
+            ),
           ],
         ),
       ),

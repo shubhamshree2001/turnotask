@@ -6,21 +6,18 @@ import 'package:turnotask/data/values/text_styles.dart';
 
 class AppTheme {
   static MaterialColor generateMaterialColor(Color color) {
-    return MaterialColor(
-      color.value,
-      <int, Color>{
-        50: _tintColor(color, 0.9),
-        100: _tintColor(color, 0.8),
-        200: _tintColor(color, 0.6),
-        300: _tintColor(color, 0.4),
-        400: _tintColor(color, 0.2),
-        500: color,
-        600: _shadeColor(color, 0.1),
-        700: _shadeColor(color, 0.2),
-        800: _shadeColor(color, 0.3),
-        900: _shadeColor(color, 0.4),
-      },
-    );
+    return MaterialColor(color.value, <int, Color>{
+      50: _tintColor(color, 0.9),
+      100: _tintColor(color, 0.8),
+      200: _tintColor(color, 0.6),
+      300: _tintColor(color, 0.4),
+      400: _tintColor(color, 0.2),
+      500: color,
+      600: _shadeColor(color, 0.1),
+      700: _shadeColor(color, 0.2),
+      800: _shadeColor(color, 0.3),
+      900: _shadeColor(color, 0.4),
+    });
   }
 
   static Color _tintColor(Color color, double factor) => Color.fromRGBO(
@@ -37,7 +34,6 @@ class AppTheme {
     1,
   );
 
-
   static final darkTheme = ThemeData(
     fontFamily: 'Inter',
     primaryColor: AppColors.primaryColor,
@@ -47,8 +43,7 @@ class AppTheme {
       surface: AppColors.backgroundDark,
       error: Colors.red,
     ),
-    primarySwatch:
-    generateMaterialColor(AppColors.primaryColor),
+    primarySwatch: generateMaterialColor(AppColors.primaryColor),
     brightness: Brightness.dark,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.colorNeutralDark700,
@@ -101,8 +96,7 @@ class AppTheme {
       surface: AppColors.bgColor,
       error: Colors.red,
     ),
-    primarySwatch:
-    generateMaterialColor(AppColors.primaryColor),
+    primarySwatch: generateMaterialColor(AppColors.primaryColor),
     brightness: Brightness.light,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: AppColors.colorNeutral700,

@@ -13,7 +13,6 @@ class AppStorage {
     return val;
   }
 
-
   Future<void> setThemeMode(ThemeModeOption mode) async {
     await _box.write(TurnoStorageKeys.themeMode, mode.name);
   }
