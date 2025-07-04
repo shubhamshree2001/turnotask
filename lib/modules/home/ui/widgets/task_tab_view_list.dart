@@ -295,11 +295,7 @@ class _TaskListViewState extends State<TaskListView>
                   PrimaryCta(
                     onTap: () {
                       homeCubit.markAsCompleted(task, index);
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   customSnackBar(context, "Task completed successfully!"),
-                      // );
                       showCenterSnackBar(context, "Task completed successfully!");
-
                     },
                     label: "Mark Done",
                     color: Colors.orange.withOpacity(0.8),
