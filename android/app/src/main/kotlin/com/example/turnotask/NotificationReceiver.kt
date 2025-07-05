@@ -15,6 +15,14 @@ class NotificationReceiver : BroadcastReceiver() {
         val title = intent.getStringExtra("title")
         val body = intent.getStringExtra("body")
 
+        val tapIntent = Intent(context, MainActivity::class.java).apply {
+            putExtra("action", "notificationTapped")
+        }
+        val tapPendingIntent = PendingIntent.getActivity(
+            context, id + 2, tapIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val markDoneIntent = Intent(context, MarkDoneReceiver::class.java).apply {
             putExtra("id", id)
         }
@@ -35,6 +43,7 @@ class NotificationReceiver : BroadcastReceiver() {
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(body)
+            .setContentIntent(tapPendingIntent)
             .addAction(R.mipmap.ic_launcher, "Mark as Done", markDonePendingIntent)
             .setAutoCancel(true)
 

@@ -60,6 +60,21 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        val action = intent.getStringExtra("action")
+        if (action == "markDoneTapped") {
+            MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
+                .invokeMethod("markDoneTapped", null)
+        }
+        if (action == "notificationTapped") {
+            MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
+                .invokeMethod("notificationTapped", null)
+        }
+    }
+
     private fun scheduleNotification(id: Int, title: String, body: String, timestamp: Long, repeatInterval: String) {
         val intent = Intent(this, NotificationReceiver::class.java).apply {
             putExtra("id", id)

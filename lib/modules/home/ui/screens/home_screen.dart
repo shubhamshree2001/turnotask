@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 homeCubit.state.allTask.isEmpty
-                    ? noTaskView(context)
+                    ? Expanded(child: noTaskView(context))
                     : Expanded(child: TaskListView()),
                 Gap(20.h),
               ],
@@ -132,32 +132,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Widget noTaskView(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Gap(12.h),
-          AppImages.emptyTask.toSvg(),
-          Text(
-            'No Reminders',
-            textAlign: TextAlign.center,
-            style: context.textTheme.displayLarge?.withAdaptiveColor(
-              context,
-              lightColor: AppColors.colorNeutral900,
-              darkColor: AppColors.colorNeutralDark900,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Gap(12.h),
+            AppImages.emptyTask.toSvg(),
+            Text(
+              'No Reminders',
+              textAlign: TextAlign.center,
+              style: context.textTheme.displayLarge?.withAdaptiveColor(
+                context,
+                lightColor: AppColors.colorNeutral900,
+                darkColor: AppColors.colorNeutralDark900,
+              ),
             ),
-          ),
-          Gap(8.h),
-          Text(
-            'Create a reminder and it will show up here.',
-            textAlign: TextAlign.center,
-            style: context.textTheme.labelLarge?.withAdaptiveColor(
-              context,
-              lightColor: AppColors.colorNeutral900,
-              darkColor: AppColors.colorNeutralDark900,
+            Gap(8.h),
+            Text(
+              'Create a reminder and it will show up here.',
+              textAlign: TextAlign.center,
+              style: context.textTheme.labelLarge?.withAdaptiveColor(
+                context,
+                lightColor: AppColors.colorNeutral900,
+                darkColor: AppColors.colorNeutralDark900,
+              ),
             ),
-          ),
-        ],
+            Gap(24.h),
+          ],
+        ),
       ),
     );
   }

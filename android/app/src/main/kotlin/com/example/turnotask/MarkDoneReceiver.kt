@@ -21,6 +21,7 @@ class MarkDoneReceiver : BroadcastReceiver() {
             //  Restart the app or bring it to foreground
             val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
             launchIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            launchIntent?.putExtra("action", "markDoneTapped")
             context.startActivity(launchIntent)
 
             // Cancel the notification

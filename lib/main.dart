@@ -17,6 +17,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await setup();
+  const MethodChannel platform = MethodChannel('local_notifications');
+
+  platform.setMethodCallHandler((call) async {
+    if (call.method == 'markDoneTapped') {
+      debugPrint('✅main file Mark as Done tapped → do your update');
+      // e.g. context.read<HomeCubit>().markTaskDoneFromNotification();
+    }
+    if (call.method == 'notificationTapped') {
+      debugPrint('✅ Notification body tapped → maybe navigate');
+      // e.g. navigate to task detail page
+    }
+  });
   await TaskCacheManager.handleBootReschedule();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

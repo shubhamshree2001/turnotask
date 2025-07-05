@@ -66,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
           : AppColors.backgroundDark,
       body: Center(
         child: Text(
-          'TURNO TASK',
+          'TASKLY',
           style: context.textTheme.displayLarge?.withAdaptiveColor(
             context,
             lightColor: AppColors.colorNeutral900,
