@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
+import 'package:turnotask/data/values/app_images.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
 import 'package:turnotask/modules/home/ui/widgets/notification_permission_dialogue.dart';
@@ -15,7 +16,9 @@ import 'package:turnotask/widgets/bottom_sheet_mainframe.dart';
 import 'package:turnotask/widgets/kapp_widget.dart';
 
 class CreateTaskBottomSheet extends StatefulWidget {
-  const CreateTaskBottomSheet({super.key});
+  final int taskIDByEdit;
+
+  const CreateTaskBottomSheet({super.key, this.taskIDByEdit = -1});
 
   @override
   State<CreateTaskBottomSheet> createState() => _CreateTaskBottomSheetState();
@@ -31,13 +34,19 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final hasNotificationPermissionAndroid = state.hasNotificationPermissionAndroid;
-        final hasExactAlarmPermissionAndroid = state.hasExactAlarmNotificationPermission;
+        final hasNotificationPermissionAndroid =
+            state.hasNotificationPermissionAndroid;
+        final hasExactAlarmPermissionAndroid =
+            state.hasExactAlarmNotificationPermission;
         final hasNotificationPermissionIos = state.hasNotificationPermissionIos;
         final canScheduleReminder = Platform.isAndroid
             ? hasNotificationPermissionAndroid && hasExactAlarmPermissionAndroid
             : hasNotificationPermissionIos;
         return BottomSheetMainFrame(
+          onCloseClick: () {
+            homeCubit.clearAllFields();
+            Navigator.pop(context);
+          },
           label: getSheetTitle(),
           initialChildSize: 0.7,
           minChildSize: 0.6,
@@ -71,12 +80,13 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                         darkColor: AppColors.colorNeutralDark900,
                       ),
                     ),
-                    if (Platform.isAndroid && !hasNotificationPermissionAndroid) ...[
+                    if (Platform.isAndroid &&
+                        !hasNotificationPermissionAndroid) ...[
                       Gap(8.w),
                       IconButton(
                         icon: const Icon(
                           Icons.info_outline,
-                          color: AppColors.primaryColor,
+                          color: AppColors.primaryColorNew,
                         ),
                         onPressed: () {
                           kAppShowDialog(
@@ -90,12 +100,13 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                           );
                         },
                       ),
-                    ] else if (Platform.isIOS && !hasNotificationPermissionIos) ...[
+                    ] else if (Platform.isIOS &&
+                        !hasNotificationPermissionIos) ...[
                       Gap(8.w),
                       IconButton(
                         icon: const Icon(
                           Icons.info_outline,
-                          color: AppColors.primaryColor,
+                          color: AppColors.primaryColorNew,
                         ),
                         onPressed: () {
                           kAppShowDialog(
@@ -132,7 +143,7 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                       IconButton(
                         icon: const Icon(
                           Icons.info_outline,
-                          color: AppColors.primaryColor,
+                          color: AppColors.primaryColorNew,
                         ),
                         onPressed: () {
                           kAppShowDialog(
@@ -151,7 +162,9 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                 ],
                 Text(
                   homeCubit.state.selectedDateTime != null
-                      ? homeCubit.formatDateTime(homeCubit.state.selectedDateTime.toString())
+                      ? homeCubit.formatDateTime(
+                          homeCubit.state.selectedDateTime.toString(),
+                        )
                       : 'No reminder set',
                   style: context.textTheme.bodySmall?.withAdaptiveColor(
                     context,
@@ -231,9 +244,26 @@ class _CreateTaskBottomSheetState extends State<CreateTaskBottomSheet> {
                             DateTime.now(),
                           )),
                   onTap: () async {
-                    await homeCubit.addTask(context);
-                    if (!mounted) return;
-                    showCenterSnackBar(context, "Task added successfully!");
+                    if (widget.taskIDByEdit != -1) {
+                      await homeCubit.updateEditedTask(
+                        widget.taskIDByEdit,
+                        context,
+                      );
+                      if (!mounted) return;
+                      showCenterSnackBar(
+                        context,
+                        "Task edited!",
+                        AppImages.checkIcon,
+                      );
+                    } else {
+                      await homeCubit.addTask(context);
+                      if (!mounted) return;
+                      showCenterSnackBar(
+                        context,
+                        "Task added!",
+                        AppImages.checkIcon,
+                      );
+                    }
                   },
                   label: 'Add Task',
                 ),

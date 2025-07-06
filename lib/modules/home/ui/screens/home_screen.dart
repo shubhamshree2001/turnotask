@@ -100,30 +100,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             tooltip: 'Add Task',
             child: const Icon(Icons.add),
           ),
-          appBar: AppBar(
-            elevation: 6,
-            title: Text(
-              'Taskly',
-              style: context.textTheme.labelLarge?.withAdaptiveColor(
-                context,
-                lightColor: AppColors.colorNeutral900,
-                darkColor: AppColors.colorNeutralDark900,
-              ),
-            ),
-            actions: [setAppTheme(context)],
-          ),
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                homeCubit.state.allTask.isEmpty
-                    ? Expanded(child: noTaskView(context))
-                    : Expanded(child: TaskListView()),
-                Gap(20.h),
-              ],
-            ),
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              homeCubit.state.allTask.isEmpty
+                  ? Expanded(child: noTaskView(context))
+                  : Expanded(child: TaskListView()),
+              Gap(20.h),
+            ],
           ),
         );
       },
@@ -131,61 +116,80 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   Widget noTaskView(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Gap(12.h),
-            AppImages.emptyTask.toSvg(),
-            Text(
-              'No Reminders',
-              textAlign: TextAlign.center,
-              style: context.textTheme.displayLarge?.withAdaptiveColor(
-                context,
-                lightColor: AppColors.colorNeutral900,
-                darkColor: AppColors.colorNeutralDark900,
-              ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(
+              left: 20.w,
+              right: 20.w,
+              top: 40.h,
+              bottom: 30.h,
             ),
-            Gap(8.h),
-            Text(
-              'Create a reminder and it will show up here.',
-              textAlign: TextAlign.center,
-              style: context.textTheme.labelLarge?.withAdaptiveColor(
-                context,
-                lightColor: AppColors.colorNeutral900,
-                darkColor: AppColors.colorNeutralDark900,
-              ),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 4,
+                  offset: Offset(0, 4),
+                ),
+              ],
+              color: AppColors.primaryColorNew,
             ),
-            Gap(24.h),
-          ],
-        ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Taskly',
+                  style: context.textTheme.headlineLarge?.withAdaptiveColor(
+                    context,
+                    lightColor: AppColors.colorNeutralDark900,
+                    darkColor: AppColors.colorNeutral900,
+                  ),
+                ),
+                setAppTheme(context),
+              ],
+            ),
+          ),
+          AppImages.emptyTask.toSvg(),
+          Text(
+            'No Reminders',
+            textAlign: TextAlign.center,
+            style: context.textTheme.displayLarge?.withAdaptiveColor(
+              context,
+              lightColor: AppColors.colorNeutral900,
+              darkColor: AppColors.colorNeutralDark900,
+            ),
+          ),
+          Gap(8.h),
+          Text(
+            'Create a reminder and it will show up here.',
+            textAlign: TextAlign.center,
+            style: context.textTheme.labelLarge?.withAdaptiveColor(
+              context,
+              lightColor: AppColors.colorNeutral900,
+              darkColor: AppColors.colorNeutralDark900,
+            ),
+          ),
+          Gap(24.h),
+        ],
       ),
     );
   }
-
-  // Widget taskListView(HomeCubit homeCubit) {
-  //   return ListView.builder(
-  //     shrinkWrap: true,
-  //     physics: NeverScrollableScrollPhysics(),
-  //     itemCount: homeCubit.state.allTask.length,
-  //     itemBuilder: (context, index) {
-  //       final task = homeCubit.state.allTask[index];
-  //       return taskListItem(task, context, homeCubit, index);
-  //     },
-  //   );
-  // }
 
   Widget setAppTheme(BuildContext context) {
     return IconButton(
       onPressed: () {
         kAppShowModalBottomSheet(context, const SetAppThemeBottomSheet());
       },
-      icon: AppImages.paint.toSvg(
-        height: 24.w,
-        width: 24.w,
-        color: context.isDarkTheme
+      icon: AppImages.appTheme.toSvg(
+        height: 30.w,
+        width: 30.w,
+        color: context.isLightTheme
             ? AppColors.colorNeutralDark900
             : AppColors.colorNeutral900,
       ),

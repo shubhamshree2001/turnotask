@@ -7,16 +7,25 @@ import 'package:turnotask/data/values/font_size.dart';
 class TurnoTextStyle {
   // Inter Text styles -----------
 
-  static TextStyle aller12Inter400 = TextStyle(
+  static TextStyle turno10Inter400 = TextStyle(
     color: AppColors.colorNeutral900,
-    fontSize: AppFontSize.heading12.sp,
+    fontSize: AppFontSize.heading10.sp,
     fontWeight: FontWeight.w400,
     fontFamily: FontsConstant.inter,
     letterSpacing: 0,
     height: 1.44,
   );
 
-  static TextStyle aller14Inter400 = TextStyle(
+  static TextStyle turno12Inter600 = TextStyle(
+    color: AppColors.colorNeutral900,
+    fontSize: AppFontSize.heading12.sp,
+    fontWeight: FontWeight.w600,
+    fontFamily: FontsConstant.inter,
+    letterSpacing: 0,
+    height: 1.44,
+  );
+
+  static TextStyle turno14Inter400 = TextStyle(
     color: AppColors.colorNeutral900,
     fontSize: AppFontSize.heading14.sp,
     fontWeight: FontWeight.w400,
@@ -24,7 +33,7 @@ class TurnoTextStyle {
     letterSpacing: 0,
   );
 
-  static TextStyle aller14Inter600 = TextStyle(
+  static TextStyle turno14Inter600 = TextStyle(
     color: AppColors.colorNeutral900,
     fontSize: AppFontSize.heading14.sp,
     fontWeight: FontWeight.w600,
@@ -33,7 +42,7 @@ class TurnoTextStyle {
     letterSpacing: 0,
   );
 
-  static TextStyle aller16Inter600 = TextStyle(
+  static TextStyle turno16Inter600 = TextStyle(
     color: AppColors.colorNeutral900,
     fontSize: AppFontSize.heading16.sp,
     fontWeight: FontWeight.w600,
@@ -41,9 +50,36 @@ class TurnoTextStyle {
     height: 143 / 100,
     letterSpacing: 0,
   );
-  static TextStyle aller18Inter600 = TextStyle(
+  static TextStyle turno18Inter600 = TextStyle(
     color: AppColors.colorNeutral900,
     fontSize: AppFontSize.heading18.sp,
+    fontWeight: FontWeight.w600,
+    fontFamily: FontsConstant.inter,
+    height: 143 / 100,
+    letterSpacing: 0,
+  );
+
+  static TextStyle turno24Inter600 = TextStyle(
+    color: AppColors.colorNeutral900,
+    fontSize: AppFontSize.heading24.sp,
+    fontWeight: FontWeight.w600,
+    fontFamily: FontsConstant.inter,
+    height: 143 / 100,
+    letterSpacing: 0,
+  );
+
+  static TextStyle turno30Inter600 = TextStyle(
+    color: AppColors.colorNeutral900,
+    fontSize: AppFontSize.heading30.sp,
+    fontWeight: FontWeight.w600,
+    fontFamily: FontsConstant.inter,
+    height: 143 / 100,
+    letterSpacing: 0,
+  );
+
+  static TextStyle turno20Inter600 = TextStyle(
+    color: AppColors.colorNeutral900,
+    fontSize: AppFontSize.heading20.sp,
     fontWeight: FontWeight.w600,
     fontFamily: FontsConstant.inter,
     height: 143 / 100,

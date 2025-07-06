@@ -6,7 +6,6 @@ import 'package:gap/gap.dart';
 import 'package:turnotask/data/theme/app_colours.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/data/utils/string_extension.dart';
-import 'package:turnotask/data/values/app_images.dart';
 
 Future kAppShowModalBottomSheet(
   BuildContext context,
@@ -62,7 +61,11 @@ Future<T?> kAppShowDialog<T>(
   ).whenComplete(() => whenComplete?.call());
 }
 
-void showCenterSnackBar(BuildContext context, String message) {
+void showCenterSnackBar(
+  BuildContext context,
+  String message,
+  String snackBarIcon,
+) {
   final overlay = Overlay.of(context);
   final overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
@@ -74,13 +77,13 @@ void showCenterSnackBar(BuildContext context, String message) {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            color: AppColors.completedColor,
+            borderRadius: BorderRadius.circular(10.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black12,
+                color: Colors.black.withOpacity(0.25),
                 blurRadius: 4,
-                offset: Offset(0, 2),
+                offset: Offset(0, 4),
               ),
             ],
           ),
@@ -89,7 +92,11 @@ void showCenterSnackBar(BuildContext context, String message) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppImages.doneIcon.toSvg(height: 64.w, width: 64.w),
+              snackBarIcon.toSvg(
+                height: 40.w,
+                width: 40.w,
+                color: AppColors.black,
+              ),
               Gap(4.h),
               Text(
                 message,
@@ -108,7 +115,7 @@ void showCenterSnackBar(BuildContext context, String message) {
 
   overlay.insert(overlayEntry);
 
-  Future.delayed(const Duration(seconds: 3), () {
+  Future.delayed(const Duration(seconds: 2), () {
     overlayEntry.remove();
   });
 }

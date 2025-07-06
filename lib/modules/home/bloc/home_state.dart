@@ -12,6 +12,9 @@ class HomeState extends Equatable {
   final bool hasNotificationPermissionAndroid;
   final String? title;
   final String? desc;
+  final List<Task> inProgressTask;
+  final List<Task> completedTask;
+  final List<Task> deletedTask;
 
   const HomeState({
     this.isLoading = false,
@@ -24,6 +27,9 @@ class HomeState extends Equatable {
     this.hasNotificationPermissionAndroid = false,
     this.title,
     this.desc,
+    this.completedTask = const [],
+    this.deletedTask = const [],
+    this.inProgressTask = const [],
   });
 
   @override
@@ -38,5 +44,8 @@ class HomeState extends Equatable {
     hasNotificationPermissionAndroid,
     title,
     desc,
+    completedTask,
+    deletedTask,
+    inProgressTask,
   ];
 }

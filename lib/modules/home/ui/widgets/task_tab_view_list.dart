@@ -8,7 +8,8 @@ import 'package:turnotask/data/utils/string_extension.dart';
 import 'package:turnotask/data/values/app_images.dart';
 import 'package:turnotask/modules/home/bloc/home_cubit.dart';
 import 'package:turnotask/modules/home/model/task_model.dart';
-import 'package:turnotask/modules/home/ui/widgets/primary_cta.dart';
+import 'package:turnotask/modules/home/ui/widgets/create_task_bottomsheet.dart';
+import 'package:turnotask/modules/home/ui/widgets/set_app_theme_bottomsheet.dart';
 import 'package:turnotask/widgets/kapp_widget.dart';
 
 class TaskListView extends StatefulWidget {
@@ -39,52 +40,17 @@ class _TaskListViewState extends State<TaskListView>
     final HomeCubit homeCubit = context.read<HomeCubit>();
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final completedTasks = homeCubit.state.allTask
-            .where((t) => t.isCompleted)
-            .toList();
-        final inProgressTasks = homeCubit.state.allTask
-            .where((t) => !t.isCompleted)
-            .toList();
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        List<Task> completedTasks = homeCubit.state.completedTask;
+        List<Task> inProgressTasks = homeCubit.state.inProgressTask;
+        return Stack(
+          alignment: Alignment.bottomCenter,
           children: [
-            Gap(12.h),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10.r)),
-                color: context.isLightTheme
-                    ? AppColors.primaryColor.withOpacity(0.4)
-                    : AppColors.primaryColor.withOpacity(0.7),
-              ),
-              child: TabBar(
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: AppColors.transparent,
-                controller: _tabController,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black54,
-                indicator: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  borderRadius: BorderRadius.all(Radius.circular(10.r)),
-                ),
-                labelPadding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 12.w,
-                ),
-                tabs: [
-                  _buildTab('In Progress', inProgressTasks.length),
-                  _buildTab('Completed', completedTasks.length),
-                ],
-              ),
-            ),
-            Gap(12.h),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildVerticalTaskList(inProgressTasks, homeCubit),
-                  _buildVerticalTaskList(completedTasks, homeCubit, true),
-                ],
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                tabBarTopView(context, inProgressTasks, completedTasks),
+                tabBarListView(inProgressTasks, homeCubit, completedTasks),
+              ],
             ),
           ],
         );
@@ -92,7 +58,136 @@ class _TaskListViewState extends State<TaskListView>
     );
   }
 
-  Widget _buildTab(String title, int count) {
+  Widget tabBarListView(
+    List<Task> inProgressTasks,
+    HomeCubit homeCubit,
+    List<Task> completedTasks,
+  ) {
+    return Expanded(
+      child: TabBarView(
+        controller: _tabController,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: _buildVerticalTaskList(inProgressTasks, homeCubit),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: _buildVerticalTaskList(completedTasks, homeCubit, true),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget tabBarTopView(
+    BuildContext context,
+    List<Task> inProgressTasks,
+    List<Task> completedTasks,
+  ) {
+    return Container(
+      width: double.infinity,
+      height: 0.435.sh,
+      padding: EdgeInsets.only(
+        left: 20.w,
+        right: 20.w,
+        top: 40.h,
+        bottom: 30.h,
+      ),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 4,
+            offset: Offset(0, 4),
+          ),
+        ],
+        color: AppColors.primaryColorNew,
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.r)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Taskly',
+                style: context.textTheme.headlineLarge?.withAdaptiveColor(
+                  context,
+                  lightColor: AppColors.colorNeutralDark900,
+                  darkColor: AppColors.colorNeutral900,
+                ),
+              ),
+              setAppTheme(context),
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.alarm,
+                color: context.isLightTheme
+                    ? AppColors.colorNeutralDark900
+                    : AppColors.colorNeutral900,
+                size: 45.w,
+              ),
+              Gap(12.h),
+              Text(
+                'Reminders',
+                style: context.textTheme.headlineSmall?.withAdaptiveColor(
+                  context,
+                  lightColor: AppColors.colorNeutralDark900,
+                  darkColor: AppColors.colorNeutral900,
+                ),
+              ),
+              Gap(20.h),
+              tabSelectionButtonView(inProgressTasks, completedTasks),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget tabSelectionButtonView(
+    List<Task> inProgressTasks,
+    List<Task> completedTasks,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.completedColor,
+        borderRadius: BorderRadius.circular(10.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 4,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: AppColors.transparent,
+        labelPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+        indicator: BoxDecoration(
+          color: AppColors.inProgressColor.withOpacity(0.9),
+          border: Border.all(color: Colors.white, width: 2),
+          borderRadius: BorderRadius.all(Radius.circular(10.r)),
+        ),
+        tabs: [
+          buildTab('In Progress', inProgressTasks.length),
+          buildTab('Completed', completedTasks.length),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTab(String title, int count) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -100,15 +195,15 @@ class _TaskListViewState extends State<TaskListView>
           title,
           style: context.textTheme.labelLarge?.withAdaptiveColor(
             context,
-            lightColor: AppColors.colorNeutral900,
+            lightColor: AppColors.white,
             darkColor: AppColors.colorNeutral900,
           ),
         ),
-        Gap(4.w),
+        Gap(8.w),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.w),
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.w),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white,
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -132,10 +227,11 @@ class _TaskListViewState extends State<TaskListView>
     if (tasks.isEmpty) {
       if (fromCompleteTaskList) {
         return Column(
-           mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppImages.emptyTask.toSvg(),
+            //AppImages.emptyTask.toSvg(),
             Text(
               'No Completed Task!',
               textAlign: TextAlign.center,
@@ -151,8 +247,9 @@ class _TaskListViewState extends State<TaskListView>
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppImages.emptyTask.toSvg(),
+            // AppImages.emptyTask.toSvg(),
             Text(
               'No Pending Task!',
               textAlign: TextAlign.center,
@@ -185,124 +282,212 @@ class _TaskListViewState extends State<TaskListView>
   ) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.w),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      task.isCompleted
-                          ? Container(
-                              width: 24.w,
-                              height: 24.w,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.green,
-                              ),
-                              child: Icon(
-                                Icons.check,
-                                size: 24.w,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Icon(
-                              Icons.pending_actions,
-                              color: Colors.orange,
-                              size: 24.w,
-                            ),
-                      Gap(12.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            taskTitleText(task, context),
-                            Gap(4.w),
-                            taskDescText(task.description, context),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Gap(8.w),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red, size: 24.w),
-                  tooltip: 'Delete',
-                  onPressed: () async {
-                    await homeCubit.deleteTask(index);
-                    if (!mounted) return;
-                    showCenterSnackBar(context, "Task deleted successfully!");
-                  },
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
+            decoration: BoxDecoration(
+              color: task.isCompleted
+                  ? context.isLightTheme
+                        ? AppColors.completedColor
+                        : AppColors.completedColor
+                  : context.isLightTheme
+                  ? AppColors.inProgressColor
+                  : AppColors.inProgressColor.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(10.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.25),
+                  blurRadius: 4,
+                  offset: Offset(0, 4),
                 ),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 36.w),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (task.dateTime != null) ...[
-                    Gap(4.w),
-                    taskDetailText(
-                      'Reminder added for ${homeCubit.formatDateTime(task.dateTime.toString())}',
-                      context,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          task.isCompleted
+                              ? AppImages.checkIcon.toSvg(
+                                  height: 38.w,
+                                  width: 38.w,
+                                )
+                              : AppImages.scheduleIcon.toSvg(
+                                  height: 38.w,
+                                  width: 38.w,
+                                ),
+                          Gap(12.w),
+                          taskDescAndActionContent(task, context, homeCubit),
+                        ],
+                      ),
                     ),
                   ],
-                  if (task.isCompleted && task.completionTime != null) ...[
-                    Gap(4.w),
-                    taskDetailText(
-                      'Completed on ${homeCubit.formatDateTime(task.completionTime.toString())}',
-                      context,
-                    ),
-                  ],
-                  if (task.recurrence != Recurrence.none) ...[
-                    Gap(4.w),
-                    taskDetailText(
-                      'Recurrence: ${task.recurrence.name.toUpperCase()}',
-                      context,
-                    ),
-                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 50.w),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (task.dateTime != null && !task.isCompleted) ...[
+                        Gap(4.h),
+                        taskDetailText(
+                          homeCubit.formatDateTime(task.dateTime.toString()),
+                          context,
+                        ),
+                      ],
+                      if (task.isCompleted && task.completionTime != null) ...[
+                        Gap(4.h),
+                        taskDetailText(
+                          homeCubit.formatDateTime(
+                            task.completionTime.toString(),
+                          ),
+                          context,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                if (!task.isCompleted) ...[
+                  if (task.dateTime == null) ...[Gap(8.h)],
+                  Gap(4.h),
+                  markDoneButton(homeCubit, task, context),
                 ],
-              ),
+              ],
             ),
-            if (!task.isCompleted) ...[
-              Gap(8.w),
+          ),
+          if (task.recurrence != Recurrence.none) ...[
+            recurrenceLabel(task, context),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Expanded taskDescAndActionContent(
+    Task task,
+    BuildContext context,
+    HomeCubit homeCubit,
+  ) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          taskTitleText(task, context),
+          Gap(4.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              taskDescText(task.description, context),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  PrimaryCta(
-                    onTap: () {
-                      homeCubit.markAsCompleted(task, index);
-                      showCenterSnackBar(context, "Task completed successfully!");
+                  if (!task.isCompleted) ...[
+                    InkWell(
+                      onTap: () async {
+                        await homeCubit.setDataToEditTask(task.id);
+                        if (!mounted) return;
+                        kAppShowModalBottomSheet(
+                          context,
+                          CreateTaskBottomSheet(taskIDByEdit: task.id),
+                        );
+                      },
+                      child: AppImages.editIcon.toSvg(),
+                    ),
+                    Gap(8.w),
+                  ],
+                  InkWell(
+                    onTap: () async {
+                      await homeCubit.deleteTask(task.id);
+                      if (!mounted) return;
+                      showCenterSnackBar(
+                        context,
+                        "Task Deleted!",
+                        AppImages.deleteIcon,
+                      );
                     },
-                    label: "Mark Done",
-                    color: Colors.orange.withOpacity(0.8),
+                    child: AppImages.deleteIcon.toSvg(),
                   ),
                 ],
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget markDoneButton(HomeCubit homeCubit, Task task, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.labelColor,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(24.r),
+              onTap: () {
+                homeCubit.markAsCompleted(task, task.id);
+                showCenterSnackBar(
+                  context,
+                  "Task completed!",
+                  AppImages.snoozeIcon,
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.w),
+                child: Text(
+                  'Mark Done',
+                  style: context.textTheme.displaySmall?.withAdaptiveColor(
+                    context,
+                    lightColor: AppColors.colorNeutral900,
+                    darkColor: AppColors.colorNeutral900,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget recurrenceLabel(Task task, BuildContext context) {
+    return Positioned(
+      top: 0,
+      right: 0,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.w),
+        decoration: BoxDecoration(
+          color: AppColors.labelColor,
+          borderRadius: BorderRadius.only(topRight: Radius.circular(8.r)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.alarm, size: 14.w, color: AppColors.colorNeutral900),
+            Gap(4.w),
+            taskDetailText(task.recurrence.name.toUpperCase(), context, true),
           ],
         ),
       ),
@@ -316,19 +501,24 @@ class _TaskListViewState extends State<TaskListView>
       overflow: TextOverflow.ellipsis,
       style: context.textTheme.labelLarge?.withAdaptiveColor(
         context,
-        lightColor: AppColors.colorNeutral900,
-        darkColor: AppColors.colorNeutral900,
+        lightColor: AppColors.white,
+        darkColor: AppColors.white,
       ),
     );
   }
 
-  Widget taskDetailText(String text, BuildContext context) {
+  Widget taskDetailText(
+    String text,
+    BuildContext context, [
+    bool recurrenceColor = false,
+  ]) {
     return Text(
       text,
       style: context.textTheme.displaySmall?.withAdaptiveColor(
         context,
-        lightColor: AppColors.colorNeutral900,
-        darkColor: AppColors.colorNeutral900,
+        lightColor: recurrenceColor ? AppColors.black : AppColors.white,
+        darkColor: recurrenceColor ? AppColors.black : AppColors.white,
+        fontWeight: recurrenceColor ? FontWeight.w600 : FontWeight.w400,
       ),
     );
   }
@@ -340,8 +530,24 @@ class _TaskListViewState extends State<TaskListView>
       maxLines: 1,
       style: context.textTheme.displaySmall?.withAdaptiveColor(
         context,
-        lightColor: AppColors.colorNeutral700,
-        darkColor: AppColors.colorNeutral700,
+        lightColor: AppColors.white,
+        darkColor: AppColors.white,
+        height: 100 / 100,
+      ),
+    );
+  }
+
+  Widget setAppTheme(BuildContext context) {
+    return IconButton(
+      onPressed: () {
+        kAppShowModalBottomSheet(context, const SetAppThemeBottomSheet());
+      },
+      icon: AppImages.appTheme.toSvg(
+        height: 30.w,
+        width: 30.w,
+        color: context.isLightTheme
+            ? AppColors.colorNeutralDark900
+            : AppColors.colorNeutral900,
       ),
     );
   }

@@ -66,8 +66,12 @@ class MainActivity : FlutterActivity() {
 
         val action = intent.getStringExtra("action")
         if (action == "markDoneTapped") {
+            val taskId = intent.getIntExtra("taskId", -1)
+//            Log.d("MainActivity", "markDoneTapped  taskId from intent: $taskId")
             MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
-                .invokeMethod("markDoneTapped", null)
+                .invokeMethod("markDoneTapped", mapOf("taskId" to taskId))
+//            MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)
+//                .invokeMethod("markDoneTapped", null)
         }
         if (action == "notificationTapped") {
             MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL)

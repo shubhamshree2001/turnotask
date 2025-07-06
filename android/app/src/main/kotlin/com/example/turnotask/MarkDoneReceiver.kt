@@ -14,7 +14,7 @@ class MarkDoneReceiver : BroadcastReceiver() {
         if (id != -1) {
             // Save the ID in SharedPreferences
             val prefs: SharedPreferences = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
-            prefs.edit().putInt("flutter.notificationTaskID", id).apply()
+            prefs.edit().putInt("flutter.notificationTaskID", id).commit()
 
             Log.d("MarkDoneReceiver", "Stored notificationTaskId = $id")
 
@@ -22,6 +22,7 @@ class MarkDoneReceiver : BroadcastReceiver() {
             val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
             launchIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             launchIntent?.putExtra("action", "markDoneTapped")
+            launchIntent?.putExtra("taskId", id)
             context.startActivity(launchIntent)
 
             // Cancel the notification

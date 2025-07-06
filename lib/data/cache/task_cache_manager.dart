@@ -17,25 +17,50 @@ class TaskCacheManager {
     return box.values.toList();
   }
 
-  static Future<void> deleteTaskAt(int index) async {
+  static Future<Task?> findTask(int taskId) async {
     var box = Hive.box<Task>(boxName);
-    final task = box.getAt(index);
-    if (task != null) {
-      if (Platform.isAndroid) {
-        await NotificationHelper.cancelScheduledNotification(task.id);
-      } else {
-        await NotificationHelper.cancelScheduledNotificationIos(
-          task.id.toString(),
-        );
-      }
+
+    final task = box.values.where((t) => t.id == taskId);
+
+    if (task.isNotEmpty) {
+      return task.first;
+    } else {
+      return null;
     }
-    await box.deleteAt(index);
   }
 
-  static Future<void> updateTask(int index, Task updatedTask) async {
+  static Future<void> deleteTask(int taskID) async {
     var box = Hive.box<Task>(boxName);
-    // final oldTask = box.getAt(index);
-    await box.putAt(index, updatedTask);
+    final taskKey = box.keys.firstWhere(
+      (key) => box.get(key)?.id == taskID,
+      orElse: () => null,
+    );
+    if (taskKey != null) {
+      final task = box.get(taskKey);
+      if (task != null) {
+        if (Platform.isAndroid) {
+          await NotificationHelper.cancelScheduledNotification(task.id);
+        } else {
+          await NotificationHelper.cancelScheduledNotificationIos(
+            task.id.toString(),
+          );
+        }
+      }
+      await box.delete(taskKey);
+    }
+  }
+
+  static Future<void> updateTask(int taskId, Task updatedTask) async {
+    var box = Hive.box<Task>(boxName);
+    final taskKey = box.keys.firstWhere(
+      (key) => box.get(key)?.id == taskId,
+      orElse: () => null,
+    );
+    if (taskKey != null) {
+      await box.put(taskKey, updatedTask);
+    } else {
+      throw Exception('Task with ID $taskId not found.');
+    }
   }
 
   static Future<void> markTaskAsCompletedById(int taskId) async {
@@ -44,12 +69,9 @@ class TaskCacheManager {
       (e) => e.value.id == taskId,
       orElse: () => throw Exception('Task with ID $taskId not found.'),
     );
-
     final index = entry.key;
     final task = entry.value;
-
     if (task.isCompleted) {
-      // print('Task with ID $taskId is already completed.');
       return;
     }
     final updatedTask = Task(

@@ -34,8 +34,6 @@ class BottomSheetMainFrame extends StatelessWidget {
       minChildSize: minChildSize ?? 0.75,
       maxChildSize: 0.9,
       snap: false,
-      // snapAnimationDuration: Duration(seconds: 1),
-      // snapSizes: const [0.0, 0.9],
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
           padding: EdgeInsets.all(20.w),

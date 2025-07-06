@@ -61,13 +61,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.isLightTheme
-          ? AppColors.bgColor
-          : AppColors.backgroundDark,
+      backgroundColor: context.isLightTheme ? AppColors.white : AppColors.black,
       body: Center(
         child: Text(
           'TASKLY',
-          style: context.textTheme.displayLarge?.withAdaptiveColor(
+          style: context.textTheme.headlineMedium?.withAdaptiveColor(
             context,
             lightColor: AppColors.colorNeutral900,
             darkColor: AppColors.colorNeutralDark900,

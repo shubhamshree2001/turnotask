@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turnotask/data/routes/app_routes.dart';
 import 'package:turnotask/data/theme/app_theme.dart';
 import 'package:turnotask/data/theme/bloc/theme_cubit.dart';
@@ -21,12 +22,26 @@ void main() async {
 
   platform.setMethodCallHandler((call) async {
     if (call.method == 'markDoneTapped') {
-      debugPrint('✅main file Mark as Done tapped → do your update');
-      // e.g. context.read<HomeCubit>().markTaskDoneFromNotification();
+      int? taskId = call.arguments != null ? call.arguments['taskId'] : null;
+      debugPrint('taskId from intent: $taskId');
+
+      if (taskId == null || taskId == -1) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        taskId = prefs.getInt('flutter.notificationTaskID') ?? -1;
+        debugPrint('fallback taskId from prefs: $taskId');
+      }
+
+      if (taskId != -1) {
+        await TaskCacheManager.markTaskAsCompletedById(taskId);
+        final ctx = navigatorKey.currentContext;
+        if (ctx != null) {
+          await ctx.read<HomeCubit>().loadAndCacheTask();
+        }
+        gPrefs.clear();
+      }
     }
     if (call.method == 'notificationTapped') {
-      debugPrint('✅ Notification body tapped → maybe navigate');
-      // e.g. navigate to task detail page
+      debugPrint('Notification body tapped');
     }
   });
   await TaskCacheManager.handleBootReschedule();

@@ -38,7 +38,7 @@ class _SetAppThemeBottomSheetState extends State<SetAppThemeBottomSheet> {
                 }[option]!;
                 return RadioListTile<ThemeModeOption>(
                   value: option,
-                  activeColor: AppColors.primaryColor,
+                  activeColor: AppColors.inProgressColor,
                   groupValue: context.watch<ThemeCubit>().state.themeMode,
                   onChanged: (v) {
                     context.read<ThemeCubit>().setThemeMode(v!);

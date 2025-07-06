@@ -36,11 +36,11 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(hasExactAlarmNotificationPermission: hasPermission));
   }
 
-  void updateTaskTitle(String title) {
+  void updateTaskTitle(String? title) {
     emit(state.copyWith(title: title));
   }
 
-  void updateTaskDescription(String desc) {
+  void updateTaskDescription(String? desc) {
     emit(state.copyWith(desc: desc));
   }
 
@@ -64,14 +64,34 @@ class HomeCubit extends Cubit<HomeState> {
     descriptionController.clear();
     setSelectedDateTimeForTask(null);
     setSelectedRecurrenceForTask(Recurrence.none);
+    updateTaskTitle(null);
+    updateTaskDescription(null);
   }
 
   Future<void> loadAndCacheTask() async {
     final cachedTask = TaskCacheManager.loadTask();
+    final completedTasks = cachedTask
+        .where((task) => task.isCompleted)
+        .toList();
+    final inProgressTasks = cachedTask
+        .where((task) => !task.isCompleted)
+        .toList();
     if (cachedTask.isNotEmpty) {
-      emit(state.copyWith(allTask: cachedTask));
+      emit(
+        state.copyWith(
+          allTask: cachedTask,
+          completedTask: completedTasks,
+          inProgressTask: inProgressTasks,
+        ),
+      );
     } else {
-      emit(state.copyWith(allTask: const []));
+      emit(
+        state.copyWith(
+          allTask: const [],
+          completedTask: const [],
+          inProgressTask: const [],
+        ),
+      );
     }
   }
 
@@ -113,13 +133,13 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> deleteTask(int index) async {
-    await TaskCacheManager.deleteTaskAt(index);
+  Future<void> deleteTask(int taskId) async {
+    await TaskCacheManager.deleteTask(taskId);
     await loadAndCacheTask();
     HapticFeedback.heavyImpact();
   }
 
-  Future<void> markAsCompleted(Task task, int index) async {
+  Future<void> markAsCompleted(Task task, int taskId) async {
     final updatedTask = Task(
       id: task.id,
       title: task.title,
@@ -129,9 +149,63 @@ class HomeCubit extends Cubit<HomeState> {
       completionTime: DateTime.now(),
       recurrence: task.recurrence,
     );
-    await TaskCacheManager.updateTask(index, updatedTask);
+    await TaskCacheManager.updateTask(taskId, updatedTask);
     await loadAndCacheTask();
     HapticFeedback.mediumImpact();
+  }
+
+  Future<void> setDataToEditTask(int taskId) async {
+    Task? task = await TaskCacheManager.findTask(taskId);
+    if (task != null) {
+      titleController.text = task.title;
+      descriptionController.text = task.description;
+      emit(
+        state.copyWith(
+          selectedDateTime: task.dateTime,
+          selectedRecurrence: task.recurrence,
+          title: task.title,
+          desc: task.description,
+        ),
+      );
+    }
+  }
+
+  Future<void> updateEditedTask(int taskId, BuildContext context) async {
+    if (titleController.text.isEmpty || descriptionController.text.isEmpty) {
+      return;
+    }
+
+    final hasReminder = Platform.isAndroid
+        ? state.hasExactAlarmNotificationPermission &&
+              state.hasNotificationPermissionAndroid &&
+              state.selectedDateTime != null
+        : state.hasNotificationPermissionIos && state.selectedDateTime != null;
+
+    final updatedTask = Task(
+      id: taskId,
+      title: titleController.text,
+      description: descriptionController.text,
+      dateTime: hasReminder ? state.selectedDateTime : null,
+      recurrence: hasReminder ? state.selectedRecurrence : Recurrence.none,
+    );
+
+    if (hasReminder) {
+      if (Platform.isAndroid) {
+        await NotificationHelper.scheduleNotification(task: updatedTask);
+      } else {
+        await NotificationHelper.scheduleNotificationIos(task: updatedTask);
+      }
+    }
+
+    await TaskCacheManager.updateTask(taskId, updatedTask);
+    HapticFeedback.mediumImpact();
+    await loadAndCacheTask();
+
+    clearAllFields();
+
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> updateTaskData() async {
@@ -153,6 +227,6 @@ class HomeCubit extends Cubit<HomeState> {
     final day = DateFormat('d').format(dateTime);
     final month = DateFormat('MMMM').format(dateTime);
     final time = DateFormat('h:mm a').format(dateTime);
-    return '$day $month at $time';
+    return '$day $month $time';
   }
 }
