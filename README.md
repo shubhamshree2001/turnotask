@@ -146,13 +146,13 @@ class NotificationHelper {
 
 ## ⚙️ **Platform-Specific Behavior**
 
-| Feature              | iOS                        | Android                                                |
-| -------------------- | -------------------------- | ------------------------------------------------------ |
-| Notifications        | UNUserNotificationCenter   | AlarmManager + BroadcastReceiver + NotificationManager |
-| Boot Persistence     | N/A (handled by system)    | Boot receiver to re-schedule alarms                    |
-| Notification Actions | Limited                    | Action buttons supported                               |
-| Haptics              | Flutter HapticFeedback API | Flutter HapticFeedback API                             |
-| Dark Mode            | `ThemeMode.system`         | `ThemeMode.system`                                     |
+| Feature                | iOS                          | Android                                                |
+|------------------------|------------------------------|--------------------------------------------------------|
+| Notifications          | UNUserNotificationCenter     | AlarmManager + BroadcastReceiver + NotificationManager |
+| Boot Persistence       | N/A (handled by system)      | Boot receiver to re-schedule alarms                    |
+| Notification Actions   | Action buttons supported     | Action buttons supported                               |
+| Haptics                | Flutter HapticFeedback API   | Flutter HapticFeedback API                             |
+| Dark Mode              | `ThemeMode.system`           | `ThemeMode.system`                                     |
 
 ---
 
