@@ -6,6 +6,8 @@ import UserNotifications
 @objc class AppDelegate: FlutterAppDelegate {
 
   private let CHANNEL = "local_notifications"
+  private var pendingMarkDoneId: String?
+  private var methodChannel: FlutterMethodChannel?
 
   override func application(
     _ application: UIApplication,
@@ -14,6 +16,7 @@ import UserNotifications
 
     let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
     let channel = FlutterMethodChannel(name: CHANNEL, binaryMessenger: controller.binaryMessenger)
+    self.methodChannel = channel
 
     channel.setMethodCallHandler { [weak self] (call, result) in
       switch call.method {
@@ -76,6 +79,10 @@ import UserNotifications
 
     UNUserNotificationCenter.current().delegate = self
     setupNotificationCategories()
+    if let pendingId = pendingMarkDoneId {
+      channel.invokeMethod("markDoneTapped", arguments: ["taskId": pendingId])
+      pendingMarkDoneId = nil
+    }
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -121,6 +128,7 @@ import UserNotifications
     let markDoneAction = UNNotificationAction(identifier: "MARK_DONE", title: "Mark as Done", options: [.foreground])
     let category = UNNotificationCategory(identifier: "TASK_CATEGORY", actions: [markDoneAction], intentIdentifiers: [], options: [])
     UNUserNotificationCenter.current().setNotificationCategories([category])
+    print("Categories: \(UNUserNotificationCenter.current().notificationCategories)")
   }
 
   /// Handle notification actions
@@ -131,7 +139,11 @@ import UserNotifications
     if response.actionIdentifier == "MARK_DONE" {
       let id = response.notification.request.identifier
       print("Task \(id) marked as done!")
-      // TODO: Send this info back to Flutter if you want.
+      if let channel = self.methodChannel {
+        channel.invokeMethod("markDoneTapped", arguments: ["taskId": id])
+      } else {
+        pendingMarkDoneId = id
+      }
     }
     completionHandler()
   }

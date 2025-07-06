@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,28 +23,44 @@ void main() async {
   const MethodChannel platform = MethodChannel('local_notifications');
 
   platform.setMethodCallHandler((call) async {
-    if (call.method == 'markDoneTapped') {
-      int? taskId = call.arguments != null ? call.arguments['taskId'] : null;
-      debugPrint('taskId from intent: $taskId');
+    if(Platform.isAndroid) {
+      if (call.method == 'markDoneTapped') {
+        int? taskId = call.arguments != null ? call.arguments['taskId'] : null;
+        debugPrint('taskId from intent: $taskId');
 
-      if (taskId == null || taskId == -1) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        taskId = prefs.getInt('flutter.notificationTaskID') ?? -1;
-        debugPrint('fallback taskId from prefs: $taskId');
-      }
-
-      if (taskId != -1) {
-        await TaskCacheManager.markTaskAsCompletedById(taskId);
-        final ctx = navigatorKey.currentContext;
-        if (ctx != null) {
-          await ctx.read<HomeCubit>().loadAndCacheTask();
+        if (taskId == null || taskId == -1) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          taskId = prefs.getInt('flutter.notificationTaskID') ?? -1;
+          debugPrint('taskId from prefs: $taskId');
         }
-        gPrefs.clear();
+
+        if (taskId != -1) {
+          await TaskCacheManager.markTaskAsCompletedById(taskId);
+          final ctx = navigatorKey.currentContext;
+          if (ctx != null) {
+            await ctx.read<HomeCubit>().loadAndCacheTask();
+          }
+          gPrefs.clear();
+        }
+      }
+      if (call.method == 'notificationTapped') {
+        debugPrint('Notification body tapped');
+      }
+    }else{
+      if (call.method == 'markDoneTapped') {
+        final args = call.arguments as Map?;
+        final taskId = args?['taskId'] as String?;
+        debugPrint('iOS called markDoneTapped $taskId');
+        if (taskId != null) {
+          await TaskCacheManager.markTaskAsCompletedById(int.parse(taskId));
+          final ctx = navigatorKey.currentContext;
+          if (ctx != null) {
+            await ctx.read<HomeCubit>().loadAndCacheTask();
+          }
+        }
       }
     }
-    if (call.method == 'notificationTapped') {
-      debugPrint('Notification body tapped');
-    }
+    return;
   });
   await TaskCacheManager.handleBootReschedule();
   await SystemChrome.setPreferredOrientations([
