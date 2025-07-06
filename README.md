@@ -47,8 +47,8 @@ A simple cross-platform Task Manager app built in Flutter (or your framework) th
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/your-task-manager-app.git
-   cd your-task-manager-app
+   git clone https://github.com/shubhamshree2001/turnotask.git
+   cd  task-manager-app
    ```
 
 2. **Install dependencies:**
