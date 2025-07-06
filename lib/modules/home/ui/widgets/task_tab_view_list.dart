@@ -233,7 +233,7 @@ class _TaskListViewState extends State<TaskListView>
           children: [
             //AppImages.emptyTask.toSvg(),
             Text(
-              'No Completed Task!',
+              'Nothing marked as done!',
               textAlign: TextAlign.center,
               style: context.textTheme.displayLarge?.withAdaptiveColor(
                 context,
